@@ -1,0 +1,225 @@
+.sidenav-small {
+    width: 55px;
+}
+
+.sidenav-full {
+    min-width: 210px;
+
+}
+
+body {
+    background-color: #d9d9e0;
+    /* background-color: #eeeefa; */
+    /* color: white; */
+    text-transform: uppercase;
+}
+
+
+/* HTML: <div class="loader"></div> */
+.loader {
+    width: 50px;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: #514b82;
+    -webkit-mask: radial-gradient(circle closest-side at 50% 40%, #0000 94%, #000);
+    transform-origin: 50% 40%;
+    animation: l25 1s infinite linear;
+}
+
+@keyframes l25 {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+
+
+/* if we want to use this scroll bar any where just add this class name and set max-height to that div whatever we want  */
+
+
+.scrollable-container {
+    overflow: auto;
+}
+
+
+.scrollable-container::-webkit-scrollbar {
+    width: 8px;
+    /* Width of the scrollbar */
+}
+
+.scrollable-container::-webkit-scrollbar-track {
+    background: #b8b2b2;
+    /* Track color */
+}
+
+.scrollable-container::-webkit-scrollbar-thumb {
+    background-color: #47478c;
+    /* Scrollbar color */
+    border-radius: 10px;
+    /* Rounded edges */
+}
+
+.common-btn {
+
+    color: white;
+    background-color: #47478c;
+    border: 0px;
+    padding-left: 21px;
+    padding-right: 21px;
+    font-size: 17px;
+    min-height: 40px;
+    max-height: 40px;
+    margin-top: 8px;
+    margin-left: 10px;
+    /* transition: all 0.8s ease-in-out; */
+}
+
+
+
+
+.common-btn:hover {
+    color: #47478c;
+    background-color: white;
+    transition: 0.3s;
+    border: 1px solid;
+}
+
+.pagination {
+    margin-top: 5px;
+}
+
+.border1 {
+    border: 1px solid blue;
+}
+
+
+.tableStyle .MuiTableCell-root {
+    text-align: center;
+}
+
+.tableBodyStyle .MuiTableCell-root {
+    text-align: center;
+    font-size: 14px;
+}
+
+.logout-btn:hover {
+    cursor: pointer;
+
+}
+
+.member-box {
+    border: 1px solid grey;
+    height: 260px;
+    width: 260px;
+    min-width: 260px;
+    padding: 15px;
+    /* box-shadow: 1px 1px 9px 1px grey; */
+    box-shadow: 1px 2px 8px 1px grey;
+    margin: 5px;
+    background-color: #1e1e75;
+    /* background-color: #06023b; */
+    /* color: rgb(5, 5, 59); */
+    color: white;
+    /* transition: all 0.3s ease-in-out; */
+}
+
+
+
+.member-box:hover {
+    background-color: #06023b;
+
+}
+
+.member-image {
+    width: 140px;
+    min-height: 140px;
+    max-height: 140px;
+    border-radius: 20px;
+}
+
+.mymodal {
+    background-color: rgb(225, 226, 239);
+    box-shadow: 2px 2px 7px rgb(115, 115, 137);
+    color: blue !important;
+    border-radius: 20px;
+}
+
+.pic-form {
+    max-height: 150px;
+    max-width: 170px;
+    /* margin-left: 10px; */
+}
+
+.member {
+    cursor: pointer;
+
+}
+
+.details-ul>li {
+    /* font-size: 50px; */
+    margin-top: 8px;
+}
+
+.detail-box {
+    /* border: 1px solid black; */
+    height: 150px;
+    width: 300px;
+    margin: 5px;
+    box-shadow: 1px 2px 8px 1px grey;
+    /* background-color: rgb(234, 234, 234); */
+    cursor: pointer;
+
+}
+
+.detail-box:hover {
+    background-color: #1e1e75;
+    color: white;
+
+}
+
+.box1 {
+    border-top: 10px solid;
+    border-color: #2a2a70;
+    color: rgb(11, 11, 196);
+}
+
+
+
+.box2 {
+    border-top: 10px solid;
+    border-color: #2a7039;
+    color: green;
+}
+
+.box3 {
+    border-top: 10px solid;
+    border-color: #baa21a;
+    color: rgb(198, 135, 17);
+}
+
+.box4 {
+    border-top: 10px solid;
+    border-color: #f4200d;
+    color: rgb(201, 8, 8);
+}
+
+.container-header {
+    background-color: #D9D9E0;
+}
+
+.plan-box {
+    height: 150px;
+    width: 180px;
+    background-color: #baa21a;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    box-shadow: 1px 2px 5px grey;
+    cursor: pointer;
+}
