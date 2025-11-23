@@ -5,6 +5,8 @@ import { ChakraProvider } from "@chakra-ui/react";
 import { Toaster } from "react-hot-toast";
 import Employee from "./pages/EmployeeManagement/Employee";
 import CreateEmployeeData from "./pages/EmployeeManagement/CreateEmployeeData";
+import Billing from "./Components/Shop/Billing";
+
 import PrivateRoute from "./pages/PrivateRoute";
 import MyProfile from "./pages/MyProfile";
 import ErrorPage from "./pages/ErrorPage";
@@ -98,6 +100,8 @@ function App() {
             path="/add-new-employee"
             element={<CreateEmployeeData />}
           ></Route>
+
+          <Route path="/Billing" element={<Billing />}></Route>
         </Route>
         <Route path="/*" element={<ErrorPage />}></Route>
       </Routes>

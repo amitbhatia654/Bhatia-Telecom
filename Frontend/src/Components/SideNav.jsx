@@ -17,12 +17,15 @@ export default function SideNav({ isOpen }) {
   const user = useSelector((state) => state.cart);
 
   const routes = [
+    { path: "Billing", logo: <ContactEmergencyIcon />, isAdmin: true },
+    { path: "Customers", logo: <ContactEmergencyIcon />, isAdmin: true },
+    { path: "Stock Management", logo: <ContactEmergencyIcon />, isAdmin: true },
     { path: "active-members", logo: <ContactEmergencyIcon />, isAdmin: true },
 
-    { path: "Inactive-Members", logo: <GradingIcon />, isAdmin: true },
-    { path: "Trainers", logo: <ContactEmergencyIcon />, isAdmin: true },
-    { path: "employees", logo: <SwitchAccountIcon />, isAdmin: true },
-    { path: "Membership-Plans", logo: <GroupIcon />, isAdmin: true },
+    // { path: "Inactive-Members", logo: <GradingIcon />, isAdmin: true },
+    // { path: "Trainers", logo: <ContactEmergencyIcon />, isAdmin: true },
+    // { path: "employees", logo: <SwitchAccountIcon />, isAdmin: true },
+    // { path: "Membership-Plans", logo: <GroupIcon />, isAdmin: true },
     { path: "gym-profile", logo: <AccountBoxIcon />, isAdmin: true },
   ];
   return (
@@ -123,7 +126,7 @@ export default function SideNav({ isOpen }) {
               my: 0.5,
               p: 1,
               boxShadow: "0px 8px 18px rgba(158, 149, 149, 0.3)",
-              color:"white"
+              color: "white",
             }}
           >
             <LogoutIcon />

@@ -43,7 +43,7 @@ export default function Index() {
     <>
       <div
         className="d-flex"
-        style={{ backgroundColor: "#1e1e75", color: "white" }}
+        style={{ backgroundColor: "#153cecff", color: "white" }}
       >
         <div
           style={{
@@ -145,7 +145,7 @@ export default function Index() {
           style={{
             borderTop: "1px solid white",
             // borderRight: "2px solid grey",
-            backgroundColor: "#1e1e75",
+            backgroundColor: "#153cecff",
           }}
         >
           <div className="d-flex justify-content-end">
