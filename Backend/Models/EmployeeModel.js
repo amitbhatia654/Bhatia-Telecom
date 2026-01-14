@@ -14,7 +14,7 @@ const EmployeeSchema = new mongoose.Schema({
         type: String, require: true
     },
     empAddress: {
-        type: String, require: true
+        type: String, require: true 
     },
     createdBy: {
         type: String, require: true

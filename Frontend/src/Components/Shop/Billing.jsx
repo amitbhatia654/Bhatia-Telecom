@@ -69,21 +69,15 @@ export default function Billing() {
 
     var data = {
       ...values,
-      planRenew: moment(values.planRenew).format(),
-      doj: moment(values.doj).format(),
     };
 
-    if (editMember._id) data.type = "edit";
-    if (values?.profilePic?.name) {
-      const base64 = await convertFileToBase64(values?.profilePic);
-      data.profilePic = base64;
-    }
+    // return console.log(data, " data is ");
 
     const res = editMember._id
       ? await axiosInstance.put(`/api/gym/member`, data)
-      : await axiosInstance.post(`/api/gym/member`, data);
+      : await axiosInstance.post(`api/create-invoice`, data);
 
-    setSubmitLoading(false);
+    return setSubmitLoading(false);
     if (res.status == 200) {
       if (editMember._id) {
         if (res.data.memberResult.status == "active") {

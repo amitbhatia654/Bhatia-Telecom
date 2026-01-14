@@ -3,6 +3,7 @@ const Member = require('../Models/MembersModel')
 const { calculateValidity } = require("../utils/CommonFunctions");
 const Trainer = require("../Models/TrainerModel");
 const Payment = require("../Models/PaymentsModel");
+// const Invoice = require("../ShopModel/")
 const MemberPlan = require("../Models/MembershipModel");
 
 
@@ -45,6 +46,8 @@ const addMember = async (req, res) => {
         console.log('New Member error', error)
     }
 }
+
+
 
 const updateMember = async (req, res) => {
     try {

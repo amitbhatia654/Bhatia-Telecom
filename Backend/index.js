@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const { app, server } = require("./socket/socket");
 const AuthRoute = require('./Router/auth-router');
 const GymRoute = require("./Router/gym-router")
+const ShopRoute = require('./Router/shop-router')
 
 
 const allowedOrigins = [
@@ -42,6 +43,8 @@ app.use('/api/auth', AuthRoute);
 app.use('/api', AuthRoute);
 
 app.use("/api/gym", GymRoute);
+app.use("/api", ShopRoute);
+
 
 app.get('/', (req, res) => {
     res.json({ "message": "hello world" });
