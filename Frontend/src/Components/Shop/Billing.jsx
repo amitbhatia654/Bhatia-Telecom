@@ -9,7 +9,7 @@ import React, { useEffect, useState } from "react";
 // import Modal from "./HelperPages/Modal";
 import Modal from "../../pages/HelperPages/Modal";
 
-import { Formik, ErrorMessage, Form } from "formik";
+import { Formik, ErrorMessage, Form, FieldArray, Field } from "formik";
 import axiosInstance from "../../ApiManager";
 const dp_image = "/user.jpg";
 import FitnessCenterIcon from "@mui/icons-material/FitnessCenter";
@@ -26,6 +26,14 @@ import {
 import ConfirmModal from "../../pages/HelperPages/Modal";
 
 import moment from "moment";
+
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import Paper from "@mui/material/Paper";
 
 export default function Billing() {
   const [showModal, setShowModal] = useState(false);
@@ -55,6 +63,7 @@ export default function Billing() {
   }
 
   const handleSubmit = async (values) => {
+    // return console.log(values, "Values");
     // return console.log(values, "values");
     setSubmitLoading(true);
 
@@ -207,7 +216,7 @@ export default function Billing() {
               setEditMember({}), setShowModal(true);
             }}
           >
-            New Bill
+            Create Bill / Invoice
           </button>
         </div>
       </div>
@@ -227,74 +236,40 @@ export default function Billing() {
                 </div>
               </>
             ) : allMembers.length > 0 ? (
-              allMembers.map((member, id) => {
-                return (
-                  <div className=" member-box text-center " key={id}>
-                    <div
-                      onClick={() =>
-                        navigate("/member-details", {
-                          state: { data: member },
-                        })
-                      }
-                      className="member"
-                    >
-                      <img
-                        src={member.profilePic ? member.profilePic : dp_image}
-                        alt=""
-                        className="member-image"
-                      />
-
-                      <div className="fw-bold mt-2" style={{ color: "" }}>
-                        {" "}
-                        {member.name}
-                      </div>
-                      <div>+91 {member?.phone_number}</div>
-                    </div>
-                    <span>
-                      Valid Till :
-                      <span className="">
-                        {" "}
-                        {formatDateToDisplay(member?.lastPayment.validTill) ??
-                          "--"}{" "}
-                      </span>
-                      <span className="dropdown ">
-                        <button
-                          className="btn "
-                          type="button"
-                          data-bs-toggle="dropdown"
-                          aria-expanded="false"
-                        >
-                          <h6>
-                            <MoreVertIcon
-                              sx={{ fontSize: "19px", color: "white" }}
-                            />
-                          </h6>
-                        </button>
-                        <ul className="dropdown-menu">
-                          <li>
-                            <button
-                              className="dropdown-item"
-                              onClick={() => {
-                                setEditMember(member), setShowModal(true);
-                              }}
-                            >
-                              Edit
-                            </button>
-                          </li>
-                          <li>
-                            <button
-                              className="dropdown-item"
-                              onClick={() => deleteMember(member._id)}
-                            >
-                              Delete
-                            </button>
-                          </li>
-                        </ul>
-                      </span>
-                    </span>
-                  </div>
-                );
-              })
+              <TableContainer component={Paper}>
+                <Table aria-label="simple table">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Customer Name </TableCell>
+                      <TableCell>Contact</TableCell>
+                      <TableCell>Item</TableCell>
+                      <TableCell>Bill Date</TableCell>
+                      <TableCell>Bill Amount</TableCell>
+                      <TableCell>:</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {allMembers.map((row) => (
+                      <TableRow
+                        key={row.name}
+                        sx={{
+                          "&:last-child td, &:last-child th": {
+                            border: 0,
+                          },
+                        }}
+                      >
+                        <TableCell component="th" scope="row">
+                          {row.name}
+                        </TableCell>
+                        <TableCell>{row.calories}</TableCell>
+                        <TableCell>{row.fat}</TableCell>
+                        <TableCell>{row.carbs}</TableCell>
+                        <TableCell>{row.protein}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
             ) : (
               <>
                 <div
@@ -321,7 +296,7 @@ export default function Billing() {
         <Modal
           setShowModal={setShowModal}
           //   otherFunc={setEditMember}
-          title={`${editMember._id ? "Edit" : "Add"} Bill `}
+          title={`${editMember._id ? "Edit" : "Create"}  Invoice`}
           handleSubmit={handleSubmit}
         >
           <Formik
@@ -333,19 +308,18 @@ export default function Billing() {
                     paymentMode: editMember.lastPayment.paymentMode,
                     memberPlan: editMember.lastPayment.memberPlan,
                     assigned_trainer: editMember?.assigned_trainer?._id,
+
+                    items: [
+                      {
+                        pd_name: "",
+                        pd_code: "",
+                        price: "",
+                      },
+                    ],
                   }
                 : {
-                    name: "",
-                    address: "",
-                    gender: "male",
-                    phone_number: "",
-                    emergency_number: "",
-                    assigned_trainer: "",
-                    doj: new Date(),
-                    planRenew: new Date(),
-                    memberPlan: 1,
-                    profilePic: "",
                     paymentMode: "cash",
+                    bill_date: new Date(),
                   }
             }
             // validationSchema={addMember}
@@ -367,17 +341,44 @@ export default function Billing() {
                             className="form-control"
                             id="exampleInputEmail1"
                             placeholder="Enter Name"
-                            value={props.values.name}
-                            name="name"
+                            value={props.values.cr_name}
+                            name="cr_name"
                             onChange={props.handleChange}
                           />
 
                           <ErrorMessage
-                            name="name"
+                            name="cr_name"
                             component="div"
                             style={{ color: "red" }}
                           />
                         </div>
+                      </div>
+
+                      <div className="col-md-6">
+                        <div className="form-group">
+                          <label htmlFor="phone-number">Phone Number</label>
+                          <input
+                            type="number"
+                            className="form-control"
+                            id="phone-number"
+                            placeholder="Enter Phone Number"
+                            value={props.values.cr_phone_number}
+                            name="cr_phone_number"
+                            // onChange={props.handleChange}
+                            onChange={(e) => {
+                              if (e.target.value.length < 11)
+                                props.setFieldValue(
+                                  "cr_phone_number",
+                                  e.target.value
+                                );
+                            }}
+                          />
+                        </div>
+                        <ErrorMessage
+                          name="cr_phone_number"
+                          component="div"
+                          style={{ color: "red" }}
+                        />
                       </div>
 
                       <div className="col-md-6 ">
@@ -388,178 +389,140 @@ export default function Billing() {
                             className="form-control"
                             id="address"
                             placeholder="Enter Address"
-                            value={props.values.address}
-                            name="address"
+                            value={props.values.cr_address}
+                            name="cr_address"
                             onChange={props.handleChange}
                           />
                         </div>
                         <ErrorMessage
-                          name="address"
+                          name="cr_address"
                           component="div"
                           style={{ color: "red" }}
                         />
                       </div>
 
-                      <div className="col-md-6 mt-3">
-                        <div className="form-group">
-                          <label htmlFor="gender"> Gender</label>
-                          <select
-                            className="form-control"
-                            id="gender"
-                            name="gender"
-                            value={props.values.gender} // Ensure it's `value`, not `values`
-                            onChange={(e) =>
-                              props.setFieldValue("gender", e.target.value)
-                            } // Update state
-                          >
-                            <option value={"male"}>Male</option>
-                            <option value={"female"}>Female</option>
-                          </select>
-                        </div>
-                      </div>
+                      <hr className="my-3" />
+                      <h5 style={{ color: "#47478C" }}>Products</h5>
 
-                      <div className="col-md-6 mt-3 ">
-                        <div className="form-group">
-                          <label htmlFor="phone-number">Phone Number</label>
-                          <input
-                            type="number"
-                            className="form-control"
-                            id="phone-number"
-                            placeholder="Enter Phone Number"
-                            value={props.values.phone_number}
-                            name="phone_number"
-                            // onChange={props.handleChange}
-                            onChange={(e) => {
-                              if (e.target.value.length < 11)
-                                props.setFieldValue(
-                                  "phone_number",
-                                  e.target.value
-                                );
-                            }}
-                          />
-                        </div>
-                        <ErrorMessage
-                          name="phone_number"
-                          component="div"
-                          style={{ color: "red" }}
-                        />
-                      </div>
+                      <FieldArray name="items">
+                        {({ push, remove }) => (
+                          <>
+                            {props.values?.items?.map((item, index) => (
+                              <div className="row mt-2" key={index}>
+                                {/* Product Name */}
+                                <div className="col-md-3">
+                                  <div className="form-group">
+                                    <label>Product Name</label>
+                                    <input
+                                      type="text"
+                                      className="form-control"
+                                      name={`items.${index}.pd_name`}
+                                      value={item.pd_name}
+                                      placeholder="Product Name"
+                                      onChange={props.handleChange}
+                                    />
+                                  </div>
+                                </div>
 
-                      <div className="col-md-6 mt-3">
-                        <div className="form-group">
-                          <label htmlFor="phone-number">
-                            Emergency Phone Number
-                          </label>
-                          <input
-                            type="number"
-                            className="form-control"
-                            id="emergency_number"
-                            placeholder="Enter Phone Number"
-                            value={props.values.emergency_number}
-                            name="emergency_number"
-                            // onChange={props.handleChange}
-                            onChange={(e) => {
-                              if (e.target.value.length < 11)
-                                props.setFieldValue(
-                                  "emergency_number",
-                                  e.target.value
-                                );
-                            }}
-                          />
-                        </div>
-                        <ErrorMessage
-                          name="emergency_number"
-                          component="div"
-                          style={{ color: "red" }}
-                        />
-                      </div>
+                                {/* Product Model */}
+                                <div className="col-md-3">
+                                  <div className="form-group">
+                                    <label>Product Model</label>
+                                    <input
+                                      type="text"
+                                      className="form-control"
+                                      name={`items.${index}.pd_code`}
+                                      value={item.pd_code}
+                                      placeholder="Model / Code"
+                                      onChange={props.handleChange}
+                                    />
+                                  </div>
+                                </div>
 
-                      <div className="col-md-6 mt-3">
-                        <div className="form-group">
-                          <label htmlFor="joining-date">Joining Date</label>
-                          <input
-                            type="date"
-                            className="form-control"
-                            id="joining-date"
-                            name="doj"
-                            value={
-                              props.values?.doj
-                                ? formatDateToInput(props.values.doj)
-                                : ""
-                            }
-                            onChange={(e) => {
-                              props.setFieldValue("doj", e.target.value);
-                            }}
-                          />
-                        </div>
-                        <ErrorMessage
-                          name="doj"
-                          component="div"
-                          style={{ color: "red" }}
-                        />
-                      </div>
+                                {/* Product Price */}
+                                <div className="col-md-3">
+                                  <div className="form-group">
+                                    <label>Price</label>
+                                    <input
+                                      type="number"
+                                      className="form-control"
+                                      name={`items.${index}.price`}
+                                      value={item.price}
+                                      placeholder="Price"
+                                      onChange={props.handleChange}
+                                    />
+                                  </div>
+                                </div>
 
-                      <div className="col-md-6 mt-3">
-                        <div className="form-group">
-                          <label htmlFor="membership">Assigned Trainer</label>
-                          <select
-                            className="form-control"
-                            id="assigned_trainer"
-                            name="assigned_trainer"
-                            value={props.values.assigned_trainer} // Controlled by Formik
-                            onChange={props.handleChange} // Formik's change handler
-                          >
-                            <option value="">Select Trainer</option>{" "}
-                            {allTrainers.map((trainer) => (
-                              <option key={trainer._id} value={trainer._id}>
-                                {trainer.name}
-                              </option>
+                                {/* Product Warranty */}
+                                <div className="col-md-3">
+                                  <div className="form-group">
+                                    <label>Warranty</label>
+                                    <select
+                                      className="form-control"
+                                      name={`items.${index}.warranty`}
+                                      value={item.warranty}
+                                      onChange={props.handleChange}
+                                    >
+                                      <option value="">Select</option>
+                                      <option value="1">1 Month</option>
+                                      <option value="3">3 Months</option>
+                                      <option value="6">6 Months</option>
+                                      <option value="12">12 Months</option>
+                                    </select>
+                                  </div>
+                                </div>
+
+                                {/* Remove Button */}
+                                <div className="col-md-1 d-flex align-items-end">
+                                  {props.values.items.length > 1 && (
+                                    <button
+                                      type="button"
+                                      className="btn btn-danger"
+                                      onClick={() => remove(index)}
+                                    >
+                                      ✕
+                                    </button>
+                                  )}
+                                </div>
+                              </div>
                             ))}
-                          </select>
 
-                          <ErrorMessage
-                            name="assigned_trainer"
-                            component="div"
-                            style={{ color: "red" }}
-                          />
-                        </div>
-                      </div>
-
-                      <div className="col-md-6 mt-3">
-                        <div className="form-group">
-                          <label htmlFor="membership">Membership Plan</label>
-                          <select
-                            className="form-control"
-                            id="memberPlan"
-                            name="memberPlan"
-                            value={props.values.memberPlan} // Ensure it's `value`, not `values`
-                            onChange={(e) =>
-                              props.setFieldValue("memberPlan", e.target.value)
-                            } // Update state
-                          >
-                            <option value={1}>1 Month</option>
-                            <option value={2}>2 Month</option>
-                            <option value={3}>3 Month</option>
-                            <option value={6}>6 Month</option>
-                          </select>
-                        </div>
-                      </div>
+                            {/* Add Row Button */}
+                            <div className="mt-3">
+                              <button
+                                type="button"
+                                className="btn btn-outline-primary"
+                                onClick={() =>
+                                  push({
+                                    pd_name: "",
+                                    pd_code: "",
+                                    price: "",
+                                  })
+                                }
+                              >
+                                ➕ Add Product
+                              </button>
+                            </div>
+                          </>
+                        )}
+                      </FieldArray>
 
                       <div className="col-md-6 mt-3">
                         <div className="form-group">
-                          <label htmlFor="planRenew">Plan starts</label>
+                          <label htmlFor="planRenew">Bill Date</label>
                           <input
                             type="date"
                             className="form-control"
                             id="planRenew"
                             name="planRenew"
                             value={
-                              props.values?.planRenew
-                                ? formatDateToInput(props.values.planRenew)
+                              props.values?.bill_date
+                                ? formatDateToInput(props.values.bill_date)
                                 : ""
                             }
                             onChange={(e) => {
-                              props.setFieldValue("planRenew", e.target.value);
+                              props.setFieldValue("bill_date", e.target.value);
                             }}
                           />
                         </div>
@@ -585,49 +548,6 @@ export default function Billing() {
                             <option value={"cash"}>Cash</option>
                             <option value={"online"}>Online</option>
                           </select>
-                        </div>
-                      </div>
-
-                      <div className="col-md-6 mt-3">
-                        <div className="form-group">
-                          <label htmlFor="pic">Profile Pic</label>
-                          <br />
-
-                          {props.values.profilePic.name ||
-                          props.values.profilePic == "" ? (
-                            <>
-                              <input
-                                type="file"
-                                className="form-control "
-                                id="pic"
-                                name="profilePic"
-                                onChange={(e) =>
-                                  props.setFieldValue(
-                                    "profilePic",
-                                    e.target.files[0]
-                                  )
-                                }
-                              />
-                            </>
-                          ) : (
-                            <>
-                              <img
-                                src={props.values?.profilePic}
-                                alt=""
-                                className="pic-form"
-                              />
-                              <br />
-                              <button
-                                className="common-btn mx-0"
-                                type="button"
-                                onClick={() =>
-                                  props.setFieldValue("profilePic", "")
-                                }
-                              >
-                                Change Pic
-                              </button>
-                            </>
-                          )}
                         </div>
                       </div>
                     </div>
