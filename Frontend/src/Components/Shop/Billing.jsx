@@ -37,6 +37,9 @@ import Paper from "@mui/material/Paper";
 
 export default function Billing() {
   const [showModal, setShowModal] = useState(false);
+  const [showInvoice, setShowInvoice] = useState(false);
+  const [invoice, setInvoice] = useState({});
+
   const [loading, setloading] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
   const [editMember, setEditMember] = useState({});
@@ -53,6 +56,19 @@ export default function Billing() {
     answer: "",
   });
   const navigate = useNavigate();
+  const headStyle = {
+    fontWeight: "bold",
+    color: "#fff",
+    border: "1px solid #e0e0e0",
+    textAlign: "center",
+  };
+
+  const bodyStyle = {
+    border: "1px solid #e0e0e0",
+    textAlign: "center",
+    fontSize: "14px",
+  };
+
   function convertFileToBase64(file) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -132,10 +148,9 @@ export default function Billing() {
 
   const fetchData = async () => {
     setloading(true);
-    const type = "active";
 
-    const res = await axiosInstance.get("/api/gym/member", {
-      params: { search, rowSize, currentPage, type },
+    const res = await axiosInstance.get("/api/get-invoices", {
+      params: { search, rowSize, currentPage },
     });
     console.log(res.data.response, "api response is");
     if (res.status == 200) {
@@ -189,7 +204,7 @@ export default function Billing() {
               color: "#47478C",
             }}
           >
-            My Bills
+            Invoices
           </span>
         </div>
         <div>
@@ -205,7 +220,7 @@ export default function Billing() {
           ></TextField>
 
           <button
-            className="common-btn"
+            className="btn btn-primary m-2"
             onClick={() => {
               setEditMember({}), setShowModal(true);
             }}
@@ -230,35 +245,58 @@ export default function Billing() {
                 </div>
               </>
             ) : allMembers.length > 0 ? (
-              <TableContainer component={Paper}>
-                <Table aria-label="simple table">
+              <TableContainer
+                component={Paper}
+                sx={{
+                  borderRadius: 2,
+                  boxShadow: 3,
+                }}
+              >
+                <Table aria-label="invoice table">
                   <TableHead>
-                    <TableRow>
-                      <TableCell>Customer Name </TableCell>
-                      <TableCell>Contact</TableCell>
-                      <TableCell>Item</TableCell>
-                      <TableCell>Bill Date</TableCell>
-                      <TableCell>Bill Amount</TableCell>
-                      <TableCell>:</TableCell>
+                    <TableRow
+                      sx={{
+                        backgroundColor: "#1976d2",
+                      }}
+                    >
+                      <TableCell sx={headStyle}>S.No.</TableCell>
+                      <TableCell sx={headStyle}>Customer Name</TableCell>
+                      <TableCell sx={headStyle}>Customer Contact</TableCell>
+                      <TableCell sx={headStyle}>Bill Date</TableCell>
+                      <TableCell sx={headStyle}>Items</TableCell>
+                      <TableCell sx={headStyle}>Bill Amount</TableCell>
+                      <TableCell sx={headStyle}>Action</TableCell>
                     </TableRow>
                   </TableHead>
+
                   <TableBody>
-                    {allMembers.map((row) => (
-                      <TableRow
-                        key={row.name}
-                        sx={{
-                          "&:last-child td, &:last-child th": {
-                            border: 0,
-                          },
-                        }}
-                      >
-                        <TableCell component="th" scope="row">
-                          {row.name}
+                    {allMembers.map((row, index) => (
+                      <TableRow key={row._id} hover>
+                        <TableCell sx={bodyStyle}>{index + 1}</TableCell>
+                        <TableCell sx={bodyStyle}>{row.cr_name}</TableCell>
+                        <TableCell sx={bodyStyle}>
+                          {row.cr_phone_number}
                         </TableCell>
-                        <TableCell>{row.calories}</TableCell>
-                        <TableCell>{row.fat}</TableCell>
-                        <TableCell>{row.carbs}</TableCell>
-                        <TableCell>{row.protein}</TableCell>
+                        <TableCell sx={bodyStyle}>
+                          {new Date(row.bill_date).toLocaleDateString()}
+                        </TableCell>
+                        <TableCell sx={bodyStyle}>
+                          {row.items?.length}
+                        </TableCell>
+                        <TableCell sx={bodyStyle}>
+                          ₹ {row.totalAmount}
+                        </TableCell>
+                        <TableCell sx={bodyStyle}>
+                          <button
+                            onClick={() => {
+                              setShowInvoice(true);
+                              setInvoice(row);
+                            }}
+                            className="btn btn-sm btn-primary"
+                          >
+                            View Invoice
+                          </button>
+                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -308,12 +346,21 @@ export default function Billing() {
                         pd_name: "",
                         pd_code: "",
                         price: "",
+                        warranty: "",
                       },
                     ],
                   }
                 : {
                     paymentMode: "cash",
                     bill_date: new Date(),
+                    items: [
+                      {
+                        pd_name: "",
+                        pd_code: "",
+                        price: "",
+                        warranty: "",
+                      },
+                    ],
                   }
             }
             // validationSchema={addMember}
@@ -397,6 +444,7 @@ export default function Billing() {
 
                       <hr className="my-3" />
                       <h5 style={{ color: "#47478C" }}>Products</h5>
+                      {console.log(props.values.items, "items are")}
 
                       <FieldArray name="items">
                         {({ push, remove }) => (
@@ -404,6 +452,7 @@ export default function Billing() {
                             {props.values?.items?.map((item, index) => (
                               <div className="row mt-2" key={index}>
                                 {/* Product Name */}
+
                                 <div className="col-md-3">
                                   <div className="form-group">
                                     <label>Product Name</label>
@@ -570,6 +619,100 @@ export default function Billing() {
               </Form>
             )}
           </Formik>
+        </Modal>
+      )}
+
+      {showInvoice && (
+        <Modal
+          setShowModal={setShowInvoice}
+          //   otherFunc={setEditMember}
+          title={"Invoice"}
+        >
+          <div id="invoice-print" className="invoice-container">
+            {/* HEADER */}
+            <div className="header">
+              <h2>BHATIA TELECOM SMARTZONE</h2>
+              <p>Mobile Sales & Repairing</p>
+              <p>Kanpur, UP</p>
+            </div>
+
+            <hr />
+
+            {/* INVOICE INFO */}
+            <div className="invoice-info">
+              <div>
+                <p>
+                  <b>Invoice No:</b> {invoice.invoiceNumber}
+                </p>
+                <p>
+                  <b>Date:</b>{" "}
+                  {new Date(invoice.bill_date).toLocaleDateString()}
+                </p>
+              </div>
+              <div>
+                <p>
+                  <b>Payment:</b> {invoice.paymentMode.toUpperCase()}
+                </p>
+              </div>
+            </div>
+
+            <hr />
+
+            {/* CUSTOMER */}
+            <div className="customer">
+              <p>
+                <b>Customer Name:</b> {invoice.cr_name}
+              </p>
+              <p>
+                <b>Mobile:</b> {invoice.cr_phone_number}
+              </p>
+              <p>
+                <b>Address:</b> {invoice.cr_address}
+              </p>
+            </div>
+
+            <hr />
+
+            {/* ITEMS TABLE */}
+            <table className="items-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Product</th>
+                  <th>Model</th>
+                  <th>Warranty</th>
+                  <th>Price (₹)</th>
+                </tr>
+              </thead>
+              <tbody>
+                {invoice.items.map((item, index) => (
+                  <tr key={index}>
+                    <td>{index + 1}</td>
+                    <td>{item.pd_name}</td>
+                    <td>{item.pd_code}</td>
+                    <td>{item.warranty} Month</td>
+                    <td>{item.price}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+
+            <hr />
+
+            {/* TOTAL */}
+            <div className="total">
+              <h3>Total Amount: ₹ {invoice.totalAmount}</h3>
+            </div>
+
+            <hr />
+
+            {/* FOOTER */}
+            <div className="footer">
+              <p>✔ Goods once sold will not be taken back</p>
+              <p>✔ Warranty as per company terms</p>
+              <p>🙏 Thank you for your business</p>
+            </div>
+          </div>
         </Modal>
       )}
 

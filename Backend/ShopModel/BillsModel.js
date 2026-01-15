@@ -1,5 +1,8 @@
 const mongoose = require("mongoose")
 
+
+
+
 const InvoiceSchema = new mongoose.Schema(
     {
         // ---------- Customer Details ----------
@@ -35,7 +38,7 @@ const InvoiceSchema = new mongoose.Schema(
 
         invoiceNumber: {
             type: String,
-            unique: true,
+            // unique: true,
         },
 
         // ---------- Products (Embedded) ----------

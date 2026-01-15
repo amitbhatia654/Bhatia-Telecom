@@ -11,6 +11,9 @@ const AuthMiddleWare = require('../auth-middleware');
 
 
 router.route('/create-invoice').post(AuthMiddleWare, shopController.createInvoice)
+router.route('/get-invoices').get(AuthMiddleWare, shopController.getInvoices)
+
+
 
 
 
