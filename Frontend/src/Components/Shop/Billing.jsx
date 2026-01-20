@@ -12,6 +12,7 @@ import Modal from "../../pages/HelperPages/Modal";
 import { Formik, ErrorMessage, Form, FieldArray, Field } from "formik";
 import axiosInstance from "../../ApiManager";
 const dp_image = "/user.jpg";
+const logo = "/logo.jpeg";
 import FitnessCenterIcon from "@mui/icons-material/FitnessCenter";
 import toast from "react-hot-toast";
 import { addMember } from "../../assets/FormSchema";
@@ -79,58 +80,59 @@ export default function Billing() {
   }
 
   const handleSubmit = async (values) => {
-    // return console.log(values, "Values");
-    // return console.log(values, "values");
     setSubmitLoading(true);
 
     var data = {
       ...values,
     };
 
-    // return console.log(data, " data is ");
-
     const res = editMember._id
       ? await axiosInstance.put(`/api/gym/member`, data)
       : await axiosInstance.post(`api/create-invoice`, data);
 
-    return setSubmitLoading(false);
-    if (res.status == 200) {
-      if (editMember._id) {
-        if (res.data.memberResult.status == "active") {
-          const updatedMember = allMembers.map((folder) => {
-            if (folder._id == values._id) {
-              return res.data.memberResult;
-            }
-            return folder;
-          });
-          setAllMembers(updatedMember);
-        } else {
-          const updatedMembers = allMembers.filter(
-            (member) => member._id !== res.data.memberResult._id
-          );
-          setAllMembers(updatedMembers);
-        }
-      } else {
-        if (
-          allMembers.length < rowSize &&
-          res.data.memberResult.status == "active"
-        )
-          allMembers.push(res.data.memberResult);
-        else {
-          const updatedMembers = allMembers.filter(
-            (member) => member._id !== res.data.memberResult._id
-          );
-          setAllMembers(updatedMembers);
-        }
-      }
-      toast.success(res.data.message);
-      setEditMember({});
+    setSubmitLoading(false);
+    // if (res.status == 200) {
+    //   if (editMember._id) {
+    //     if (res.data.memberResult.status == "active") {
+    //       const updatedMember = allMembers.map((folder) => {
+    //         if (folder._id == values._id) {
+    //           return res.data.memberResult;
+    //         }
+    //         return folder;
+    //       });
+    //       setAllMembers(updatedMember);
+    //     } else {
+    //       const updatedMembers = allMembers.filter(
+    //         (member) => member._id !== res.data.memberResult._id,
+    //       );
+    //       setAllMembers(updatedMembers);
+    //     }
+    //   } else {
+    //     if (
+    //       allMembers.length < rowSize &&
+    //       res.data.memberResult.status == "active"
+    //     )
+    //       allMembers.push(res.data.memberResult);
+    //     else {
+    //       const updatedMembers = allMembers.filter(
+    //         (member) => member._id !== res.data.memberResult._id,
+    //       );
+    //       setAllMembers(updatedMembers);
+    //     }
+    //   }
+    //   toast.success(res.data.message);
+    //   setEditMember({});
+    //   setShowModal(false);
+    // }
+
+    if (res.status == 201) {
+      allMembers.push(res.data.invoiceDetails);
       setShowModal(false);
+      console.log(res, "response is");
     }
   };
 
   const deleteMember = async (memberId) => {
-    // console.log(memberId);
     const userResponse = await showConfirmationModal();
     if (userResponse != "yes") return;
     const res = await axiosInstance.delete(`/api/gym/member`, {
@@ -140,7 +142,7 @@ export default function Billing() {
       toast.success(res.data.message);
 
       const updatedMembers = allMembers.filter(
-        (member) => member._id !== memberId
+        (member) => member._id !== memberId,
       );
       setAllMembers(updatedMembers);
     } else toast.error(res.data.message);
@@ -152,7 +154,6 @@ export default function Billing() {
     const res = await axiosInstance.get("/api/get-invoices", {
       params: { search, rowSize, currentPage },
     });
-    console.log(res.data.response, "api response is");
     if (res.status == 200) {
       setAllMembers(res.data.response);
       setTotalCount(res.data.totalCount);
@@ -222,7 +223,7 @@ export default function Billing() {
           <button
             className="btn btn-primary m-2"
             onClick={() => {
-              setEditMember({}), setShowModal(true);
+              (setEditMember({}), setShowModal(true));
             }}
           >
             Create Bill / Invoice
@@ -288,10 +289,15 @@ export default function Billing() {
                         </TableCell>
                         <TableCell sx={bodyStyle}>
                           <button
-                            onClick={() => {
-                              setShowInvoice(true);
-                              setInvoice(row);
-                            }}
+                            // onClick={() => {
+                            //   setShowInvoice(true);
+                            //   setInvoice(row);
+                            // }}
+                            onClick={() =>
+                              navigate("/view-invoice", {
+                                state: { invoice: row },
+                              })
+                            }
                             className="btn btn-sm btn-primary"
                           >
                             View Invoice
@@ -410,7 +416,7 @@ export default function Billing() {
                               if (e.target.value.length < 11)
                                 props.setFieldValue(
                                   "cr_phone_number",
-                                  e.target.value
+                                  e.target.value,
                                 );
                             }}
                           />
@@ -444,7 +450,6 @@ export default function Billing() {
 
                       <hr className="my-3" />
                       <h5 style={{ color: "#47478C" }}>Products</h5>
-                      {console.log(props.values.items, "items are")}
 
                       <FieldArray name="items">
                         {({ push, remove }) => (
@@ -626,91 +631,141 @@ export default function Billing() {
         <Modal
           setShowModal={setShowInvoice}
           //   otherFunc={setEditMember}
-          title={"Invoice"}
+          title={""}
         >
-          <div id="invoice-print" className="invoice-container">
-            {/* HEADER */}
-            <div className="header">
-              <h2>BHATIA TELECOM SMARTZONE</h2>
-              <p>Mobile Sales & Repairing</p>
-              <p>Kanpur, UP</p>
-            </div>
+          <div className="container invoice-wrapper my-4">
+            <div className="invoice-box p-4">
+              {/* Header */}
+              <div className="row mb-3">
+                <div className="col-md-6">
+                  <h5 className="fw-bold">Bhatia Telecom Smartzone</h5>
+                  <p className="mb-0 small">
+                    Shop 62A Geeta Nagar <br />
+                    Kanpur, Uttar Pradesh 208002
+                    <br />
+                    8726773631
+                    <br />
+                    <strong>GSTIN:</strong> 09DQMPB7855K1Z6
+                  </p>
+                </div>
 
-            <hr />
-
-            {/* INVOICE INFO */}
-            <div className="invoice-info">
-              <div>
-                <p>
-                  <b>Invoice No:</b> {invoice.invoiceNumber}
-                </p>
-                <p>
-                  <b>Date:</b>{" "}
-                  {new Date(invoice.bill_date).toLocaleDateString()}
-                </p>
+                <div className="col-md-6 text-end">
+                  <h3 className="text-primary fw-bold">
+                    <img src={logo} alt="" height={"100px"} width={"130px"} />
+                  </h3>
+                </div>
               </div>
-              <div>
-                <p>
-                  <b>Payment:</b> {invoice.paymentMode.toUpperCase()}
-                </p>
+
+              {/* Invoice Info */}
+              <div className="row border-top border-bottom py-2 small">
+                <div className="col-md-6">
+                  <p>
+                    <strong>Invoice No:</strong> {invoice.invoiceNumber}
+                  </p>
+                  <p>
+                    <strong>Invoice Date:</strong>{" "}
+                    {invoice?.bill_date.split("T")[0]}
+                  </p>
+
+                  <p>
+                    <strong>Payment Mode:</strong> {invoice?.paymentMode}
+                  </p>
+                </div>
+                <div className="col-md-6">
+                  <strong>Bill To:</strong>
+                  <p className="mb-0">
+                    Mr./Ms {invoice?.cr_name}
+                    <br />
+                    {invoice?.cr_address}
+                    <br />
+                    Mob - {invoice?.cr_phone_number}
+                  </p>
+                </div>
               </div>
-            </div>
 
-            <hr />
+              {/* Items Table */}
+              <div className="table-responsive mt-4">
+                <table className="table table-bordered small">
+                  <thead className="table-light">
+                    <tr>
+                      <th>#</th>
+                      <th>Description</th>
+                      <th>HSN</th>
+                      <th>Qty</th>
+                      <th>Rate</th>
+                      <th>CGST 9%</th>
+                      <th>SGST 9%</th>
+                      <th>Amount</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {invoice?.items.map((item, key) => {
+                      return (
+                        <tr>
+                          <td>{key + 1}</td>
+                          <td>{item?.pd_name}</td>
+                          <td>{item?.pd_code}</td>
+                          <td>{1}</td>
+                          <td>{item?.price}</td>
+                          <td>{0.0}</td>
+                          <td>{0.0}</td>
+                          <td>{item.price}</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
 
-            {/* CUSTOMER */}
-            <div className="customer">
-              <p>
-                <b>Customer Name:</b> {invoice.cr_name}
-              </p>
-              <p>
-                <b>Mobile:</b> {invoice.cr_phone_number}
-              </p>
-              <p>
-                <b>Address:</b> {invoice.cr_address}
-              </p>
-            </div>
+              {/* Summary */}
+              <div className="row mt-3">
+                <div className="col-md-6 small">
+                  <p>
+                    <strong>Total in Words:</strong>
+                    <br />
+                    Indian Rupees One Lakh Twenty Five Thousand Only
+                  </p>
 
-            <hr />
+                  <p className="mt-4">
+                    <strong>Bank Details:</strong>
+                    <br />
+                    A/C Name: Bhatia Telecom Smartzone
+                    <br />
+                    Bank: Bank of Baroda
+                    <br />
+                    A/C Type: Current
+                  </p>
+                </div>
 
-            {/* ITEMS TABLE */}
-            <table className="items-table">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Product</th>
-                  <th>Model</th>
-                  <th>Warranty</th>
-                  <th>Price (₹)</th>
-                </tr>
-              </thead>
-              <tbody>
-                {invoice.items.map((item, index) => (
-                  <tr key={index}>
-                    <td>{index + 1}</td>
-                    <td>{item.pd_name}</td>
-                    <td>{item.pd_code}</td>
-                    <td>{item.warranty} Month</td>
-                    <td>{item.price}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                <div className="col-md-6">
+                  <table className="table table-bordered small">
+                    <tbody>
+                      <tr>
+                        <td>Sub Total</td>
+                        <td className="text-end">₹ {invoice.totalAmount}</td>
+                      </tr>
+                      <tr>
+                        <td>CGST (9%)</td>
+                        <td className="text-end">₹0</td>
+                      </tr>
+                      <tr>
+                        <td>SGST (9%)</td>
+                        <td className="text-end">₹0</td>
+                      </tr>
+                      <tr className="fw-bold">
+                        <td>Total</td>
+                        <td className="text-end">₹ {invoice?.totalAmount}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
 
-            <hr />
-
-            {/* TOTAL */}
-            <div className="total">
-              <h3>Total Amount: ₹ {invoice.totalAmount}</h3>
-            </div>
-
-            <hr />
-
-            {/* FOOTER */}
-            <div className="footer">
-              <p>✔ Goods once sold will not be taken back</p>
-              <p>✔ Warranty as per company terms</p>
-              <p>🙏 Thank you for your business</p>
+              {/* Footer */}
+              <div className="text-end mt-5 small">
+                <p>For Bhatia Telecom Smartzone</p>
+                <p className="fw-bold">Authorised Signatory</p>
+              </div>
             </div>
           </div>
         </Modal>

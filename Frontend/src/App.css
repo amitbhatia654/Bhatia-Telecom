@@ -14,6 +14,24 @@ body {
     text-transform: uppercase;
 }
 
+/* invoice css */
+.invoice-wrapper {
+    background: #fff;
+    width: 70%;
+}
+
+
+
+@media print {
+    body {
+        background: white;
+    }
+
+    .invoice-wrapper {
+        margin: 0;
+    }
+}
+
 
 /* HTML: <div class="loader"></div> */
 .loader {
@@ -222,4 +240,27 @@ body {
     font-size: 20px;
     box-shadow: 1px 2px 5px grey;
     cursor: pointer;
+}
+
+/* to print invoice */
+@media print {
+    body * {
+        visibility: hidden;
+    }
+
+    .print-area,
+    .print-area * {
+        visibility: visible;
+    }
+
+    .print-area {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+    }
+
+    button {
+        display: none !important;
+    }
 }

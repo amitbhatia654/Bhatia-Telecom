@@ -20,6 +20,10 @@ import MemberShipPlans from "./pages/MemberShipPlans";
 import Trainers from "./pages/Trainers";
 import MembersReport from "./pages/dashboard/MembersReport";
 import TrainersDetailsPage from "./pages/Trainers/TrainersDetails";
+import Repair from "./pages/Containers/Repair";
+import Customers from "./pages/Containers/Customers";
+import Stock from "./pages/Containers/Stock";
+import ViewInvoice from "./pages/Containers/ViewInvoice";
 
 function App() {
   const isUserLogin = () => {
@@ -95,13 +99,18 @@ function App() {
             element={<h5>Membership Plans</h5>}
           ></Route>
 
-          <Route path="gym-profile" element={<MyProfile></MyProfile>}></Route>
+          <Route path="shop-profile" element={<MyProfile></MyProfile>}></Route>
           <Route
             path="/add-new-employee"
             element={<CreateEmployeeData />}
           ></Route>
 
-          <Route path="/Billing" element={<Billing />}></Route>
+          <Route path="/invoice" element={<Billing />}></Route>
+          <Route path="/repair" element={<Repair />}></Route>
+
+          <Route path="/customers" element={<Customers />}></Route>
+          <Route path="/stock" element={<Stock />}></Route>
+          <Route path="/view-invoice" element={<ViewInvoice />}></Route>
         </Route>
         <Route path="/*" element={<ErrorPage />}></Route>
       </Routes>
