@@ -96,4 +96,17 @@ const getInvoices = async (req, res) => {
     }
 };
 
-module.exports = { createInvoice, getInvoices }
+const createRepair = async (req, res) => {
+    try {
+        console.log(req.body, 'body is')
+        res.status(200).json({ response });
+
+    } catch (error) {
+        console.error('error in repair entry')
+    }
+}
+
+
+
+
+module.exports = { createInvoice, getInvoices, createRepair }

@@ -7,8 +7,14 @@
 
 }
 
+:root {
+    --bt-primary-color: #4F46E5;
+    --bt-secondary-color: #1F2937;
+    --bt-bg-color: #F9FAFB;
+}
+
 body {
-    background-color: #d9d9e0;
+    background-color: #F9FAFB;
     /* background-color: #eeeefa; */
     /* color: white; */
     text-transform: uppercase;
@@ -21,6 +27,50 @@ body {
 }
 
 
+
+
+
+.repair-tabs {
+    display: flex;
+    gap: 20px;
+    background: #d3dee9;
+    padding: 8px;
+    border-radius: 12px;
+    width: fit-content;
+}
+
+.repair-btn {
+    background-color: #0077B6;
+    color: white;
+    font-size: 17px;
+}
+
+.repair-btn:hover {
+    color: rgb(247, 241, 241);
+    background-color: #2a7039;
+}
+
+.tab-btn {
+    border: none;
+    background: transparent;
+    padding: 8px 18px;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: 0.3s ease;
+    color: #555;
+}
+
+/* .tab-btn:hover {
+    background-color: #e9ecef;
+} */
+
+.active-tab {
+    background: linear-gradient(135deg, #f2a476, #98430e);
+    color: white;
+    box-shadow: 0 6px 15px rgba(79, 70, 229, 0.4);
+    transform: translateY(-1px);
+}
 
 @media print {
     body {

@@ -43,7 +43,7 @@ export default function Index() {
     <>
       <div
         className="d-flex"
-        style={{ backgroundColor: "#153cecff", color: "white" }}
+        style={{ backgroundColor: "#111827", color: "white" }}
       >
         <div
           style={{
@@ -145,7 +145,7 @@ export default function Index() {
           style={{
             borderTop: "1px solid white",
             // borderRight: "2px solid grey",
-            backgroundColor: "#153cecff",
+            backgroundColor: "#1F2937",
           }}
         >
           <div className="d-flex justify-content-end">
@@ -153,7 +153,7 @@ export default function Index() {
               onClick={() => setIsOpen(!isOpen)}
               style={{
                 color: "white",
-                backgroundColor: "#47478C",
+                backgroundColor: "#4F46E5",
                 // border: "1px solid white",
                 fontSize: "14x",
               }}

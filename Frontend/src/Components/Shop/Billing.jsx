@@ -8,7 +8,7 @@ import {
 import React, { useEffect, useState } from "react";
 // import Modal from "./HelperPages/Modal";
 import Modal from "../../pages/HelperPages/Modal";
-
+import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import { Formik, ErrorMessage, Form, FieldArray, Field } from "formik";
 import axiosInstance from "../../ApiManager";
 const dp_image = "/user.jpg";
@@ -128,7 +128,6 @@ export default function Billing() {
     if (res.status == 201) {
       allMembers.push(res.data.invoiceDetails);
       setShowModal(false);
-      console.log(res, "response is");
     }
   };
 
@@ -302,6 +301,15 @@ export default function Billing() {
                           >
                             View Invoice
                           </button>
+
+                          <button
+                            className="btn btn-primar mx-2"
+                            onClick={() => {
+                              (setEditMember(row), setShowModal(true));
+                            }}
+                          >
+                            <ModeEditIcon></ModeEditIcon>
+                          </button>
                         </TableCell>
                       </TableRow>
                     ))}
@@ -342,19 +350,6 @@ export default function Billing() {
               editMember._id
                 ? {
                     ...editMember,
-                    planRenew: editMember.lastPayment.planRenew,
-                    paymentMode: editMember.lastPayment.paymentMode,
-                    memberPlan: editMember.lastPayment.memberPlan,
-                    assigned_trainer: editMember?.assigned_trainer?._id,
-
-                    items: [
-                      {
-                        pd_name: "",
-                        pd_code: "",
-                        price: "",
-                        warranty: "",
-                      },
-                    ],
                   }
                 : {
                     paymentMode: "cash",

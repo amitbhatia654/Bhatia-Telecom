@@ -267,7 +267,7 @@ export default function JoinedMembers() {
                           </h6>
                         </button>
                         <ul className="dropdown-menu">
-                          <li>
+                          <li> 
                             <button
                               className="dropdown-item"
                               onClick={() => {
