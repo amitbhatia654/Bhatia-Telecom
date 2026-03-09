@@ -19,6 +19,7 @@ import { addMember } from "../../assets/FormSchema";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import Pagination from "../../pages/HelperPages/Pagination";
 import { useNavigate } from "react-router-dom";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 import {
   formatDateToDisplay,
   formatDateToInput,
@@ -86,8 +87,10 @@ export default function Billing() {
       ...values,
     };
 
+    // return console.log(data, "the data is ");
+
     const res = editMember._id
-      ? await axiosInstance.put(`/api/gym/member`, data)
+      ? await axiosInstance.put(`api/update-invoice`, data)
       : await axiosInstance.post(`api/create-invoice`, data);
 
     setSubmitLoading(false);
@@ -122,9 +125,26 @@ export default function Billing() {
     //   }
     //   toast.success(res.data.message);
     //   setEditMember({});
-    //   setShowModal(false);
     // }
 
+    if (editMember._id) {
+      // const updatedMembers = allMembers.filter(
+      //   (member) => member._id !== res.data.invoiceDetails._id,
+      // );
+      // setAllMembers(updatedMembers);
+
+      const updatedMember = allMembers.map((folder) => {
+        if (folder._id == values._id) {
+          return res.data.invoiceDetails;
+        }
+        return folder;
+      });
+      setAllMembers(updatedMember);
+    }
+
+    console.log(res, "the res is ");
+
+    setShowModal(false);
     if (res.status == 201) {
       allMembers.push(res.data.invoiceDetails);
       setShowModal(false);
@@ -288,10 +308,14 @@ export default function Billing() {
                         </TableCell>
                         <TableCell sx={bodyStyle}>
                           <button
-                            // onClick={() => {
-                            //   setShowInvoice(true);
-                            //   setInvoice(row);
-                            // }}
+                            className="btn text-primary mx-2"
+                            onClick={() => {
+                              (setEditMember(row), setShowModal(true));
+                            }}
+                          >
+                            <ModeEditIcon></ModeEditIcon>
+                          </button>
+                          <button
                             onClick={() =>
                               navigate("/view-invoice", {
                                 state: { invoice: row },
@@ -299,16 +323,7 @@ export default function Billing() {
                             }
                             className="btn btn-sm btn-primary"
                           >
-                            View Invoice
-                          </button>
-
-                          <button
-                            className="btn btn-primar mx-2"
-                            onClick={() => {
-                              (setEditMember(row), setShowModal(true));
-                            }}
-                          >
-                            <ModeEditIcon></ModeEditIcon>
+                            <VisibilityIcon></VisibilityIcon> Invoice
                           </button>
                         </TableCell>
                       </TableRow>

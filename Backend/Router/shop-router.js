@@ -11,6 +11,8 @@ const AuthMiddleWare = require('../auth-middleware');
 
 
 router.route('/create-invoice').post(AuthMiddleWare, shopController.createInvoice)
+router.route('/update-invoice').put(AuthMiddleWare, shopController.updateInvoice)
+
 router.route('/get-invoices').get(AuthMiddleWare, shopController.getInvoices)
 router.route('/create-repair').post(AuthMiddleWare, shopController.createRepair)
 

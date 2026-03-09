@@ -79,6 +79,74 @@ const createInvoice = async (req, res) => {
     }
 };
 
+const updateInvoice = async (req, res) => {
+    try {
+        const invoiceId = req.body._id;
+        const {
+            cr_name,
+            cr_phone_number,
+            cr_address,
+            paymentMode,
+            bill_date,
+            items,
+        } = req.body;
+
+        // 🔍 find invoice
+        const invoice = await Invoice.findById(invoiceId);
+
+        if (!invoice) {
+            return res.status(404).json({
+                message: "Invoice not found",
+            });
+        }
+
+        // 🧮 recalculate total amount + warranty expiry
+        let totalAmount = 0;
+
+        const updatedItems = items.map((item) => {
+            totalAmount += Number(item.price || 0);
+
+            let warranty_expiry = null;
+
+            if (item.warranty) {
+                warranty_expiry = new Date(bill_date || invoice.bill_date);
+                warranty_expiry.setMonth(
+                    warranty_expiry.getMonth() + Number(item.warranty)
+                );
+            }
+
+            return {
+                ...item,
+                warranty_expiry,
+            };
+        });
+
+        // ✏️ update fields
+        invoice.cr_name = cr_name;
+        invoice.cr_phone_number = cr_phone_number;
+        invoice.cr_address = cr_address;
+        invoice.paymentMode = paymentMode;
+        invoice.bill_date = bill_date || invoice.bill_date;
+        invoice.items = updatedItems;
+        invoice.totalAmount = totalAmount;
+
+        await invoice.save();
+
+        return res.status(200).json({
+            message: "Invoice updated successfully",
+            invoiceDetails: invoice,
+        });
+
+    } catch (error) {
+        console.error("Update Invoice Error:", error);
+
+        return res.status(500).json({
+            message: "Failed to update invoice",
+            error: error.message,
+        });
+    }
+};
+
 
 
 
@@ -109,4 +177,4 @@ const createRepair = async (req, res) => {
 
 
 
-module.exports = { createInvoice, getInvoices, createRepair }
+module.exports = { createInvoice, getInvoices, createRepair, updateInvoice }
