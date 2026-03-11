@@ -22,7 +22,7 @@ import { Form, Formik } from "formik";
 import { useDispatch } from "react-redux";
 // import { add } from "../../reduxStore/UserSlice";
 import { loginSchema, registerSchema } from "../assets/FormSchema";
-import loginbg from "../../gym-login.webp";
+import loginbg from "../../mobile.webp";
 import { add } from "../reduxStore/UserSlice";
 
 const CFaUserAlt = chakra(FaUserAlt);
@@ -46,11 +46,11 @@ const LoginRegister = () => {
       type == "login"
         ? await axios.post(
             `${import.meta.env.VITE_API_URL}/api/auth/login`,
-            values
+            values,
           )
         : await axios.post(
-            `${import.meta.env.VITE_API_URL}/api/auth/register`, 
-            values
+            `${import.meta.env.VITE_API_URL}/api/auth/register`,
+            values,
           );
 
     if (res.status == 200) {
@@ -107,7 +107,7 @@ const LoginRegister = () => {
             fontFamily="'Pacifico', cursive"
           >
             {" "}
-            Gym Management
+            Bhatia Telecom
           </Heading>
           <Formik
             initialValues={
@@ -119,7 +119,7 @@ const LoginRegister = () => {
                     password: "",
                   }
                 : {
-                    email: "admin@gmail.com",
+                    email: "bhatiatelecom@gmail.com",
                     password: "admin1234",
                   }
             }
@@ -144,7 +144,7 @@ const LoginRegister = () => {
                     fontSize={"20px"}
                   >
                     {type == "login"
-                      ? "Log In to Your Gym Account"
+                      ? "Welcome Owner"
                       : "Create  New Gym Owner"}
                   </Heading>
                   {type == "register" && (
@@ -250,8 +250,8 @@ const LoginRegister = () => {
                     {loading
                       ? "please Wait..."
                       : type == "login"
-                      ? "Sign In"
-                      : "Sign Up"}
+                        ? "Sign In"
+                        : "Sign Up"}
                   </Button>
                 </Stack>
               </Form>

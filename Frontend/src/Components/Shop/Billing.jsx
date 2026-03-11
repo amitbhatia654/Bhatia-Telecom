@@ -240,12 +240,12 @@ export default function Billing() {
           ></TextField>
 
           <button
-            className="btn btn-primary m-2"
+            className="mainColor btn text-white m-2"
             onClick={() => {
               (setEditMember({}), setShowModal(true));
             }}
           >
-            Create Bill / Invoice
+            Create Invoice
           </button>
         </div>
       </div>
@@ -275,9 +275,12 @@ export default function Billing() {
                 <Table aria-label="invoice table">
                   <TableHead>
                     <TableRow
-                      sx={{
-                        backgroundColor: "#1976d2",
-                      }}
+                      className="mainColor"
+                      sx={
+                        {
+                          // backgroundColor: "#1976d2",
+                        }
+                      }
                     >
                       <TableCell sx={headStyle}>S.No.</TableCell>
                       <TableCell sx={headStyle}>Customer Name</TableCell>

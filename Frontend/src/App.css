@@ -8,10 +8,14 @@
 }
 
 :root {
-    --bt-primary-color: #4F46E5;
+    --bt-primary-color: #3d3c58;
     --bt-secondary-color: #1F2937;
     --bt-bg-color: #F9FAFB;
 }
+
+/* .navbar {
+    background-color: var(--bt-primary-color);
+} */
 
 body {
     background-color: #F9FAFB;
@@ -26,6 +30,14 @@ body {
     width: 70%;
 }
 
+
+.tablehead {
+    background-color: var(--bt-primary-color);
+}
+
+.mainColor {
+    background-color: var(--bt-primary-color);
+}
 
 
 
