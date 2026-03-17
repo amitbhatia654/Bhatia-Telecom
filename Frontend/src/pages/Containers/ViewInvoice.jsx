@@ -232,7 +232,7 @@ export default function ViewInvoice() {
                 <p className="fw-bold">Authorised Signatory</p>
               </div>
             </div>
-            test
+            {/* test */}
             {/* Brand Logos */}
             <div className="footer-bottom">
               <div>
