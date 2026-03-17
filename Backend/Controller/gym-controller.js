@@ -80,7 +80,7 @@ const updateMember = async (req, res) => {
             .populate({ path: 'lastPayment' })
 
 
-
+        // Check
         res.status(200).json({ message: "Member updated succesfully", memberResult })
     } catch (error) {
         res.status(205).send("Member Not Updated")
