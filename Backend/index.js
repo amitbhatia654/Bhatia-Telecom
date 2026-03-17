@@ -11,7 +11,7 @@ const allowedOrigins = [
     "http://localhost:5173",
     "http://localhost:5174",
     "http://192.168.29.68:5173",
-    "https://gym-mangement-frontend.vercel.app"
+    "https://bhatia-telecom.vercel.app"
 ];
 
 var cors = require('cors');
