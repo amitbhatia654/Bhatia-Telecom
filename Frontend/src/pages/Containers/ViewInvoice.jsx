@@ -2,6 +2,13 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 const logo = "/logo.jpeg";
+const myqr = "/myqr.jpeg";
+const vivo = "./images/vivo1.jpeg";
+const oppo = "./images/oppo.png";
+const samsung = "./images/samsung.png";
+const realme = "./images/realme.png";
+const itel = "./images/itel.png";
+const ubon = "./images/ubon.png";
 
 export default function ViewInvoice() {
   const navigate = useNavigate();
@@ -89,100 +96,113 @@ export default function ViewInvoice() {
         Print Invoice
       </button>
 
-      <div className="container invoice-wrapper my-1 print-area">
-        <div className=" p-4">
+      <div className="invoice-wrapper print-area">
+        <div className="p-4 ">
           {/* Header */}
           <div className="row mb-3">
-            <div className="col-md-3 ">
-              <h3 className="text-primary fw-bold">
-                <img src={logo} alt="" height={"100px"} width={"130px"} />
-              </h3>
+            <div className="col-md-9">
+              <h1 className="fw-bold text-primary">Bhatia Telecom Smartzone</h1>
+
+              <p className="mb-0">
+                Shop 62A, Geeta Nagar Crossing ,<br />
+                Infront of Metro pillar 187 , <br />
+                Kanpur U.P. 208002 <br />
+                <strong>Mob:</strong> 8726773631
+              </p>
             </div>
 
-            <div className="col-md-9 text-end">
-              <h3 className="fw-bold ">Bhatia Telecom Smartzone</h3>
-              <p className="mb-0 ">
-                Shop 62A ,Geeta Nagar crossing
-                <br />
-                Kanpur, Uttar Pradesh 208002
-                <br />
-                <strong>Mob:</strong> 8726773631
-                <br />
-                <strong>GSTIN:</strong> 09DQMPB7855K1Z6
-              </p>
+            <div className="col-md-3 text-end">
+              <img src={logo} alt="logo" height="100" width="150" />
             </div>
           </div>
 
+          {/* Invoice Title */}
+          <div className="row border text-center fw-bold py-1">
+            <div className="col-md-4"></div>
+            <div className="col-md-4">INVOICE</div>
+            <div className="col-md-4 text-end">Original For Receipt</div>
+          </div>
+
           {/* Invoice Info */}
-          <div className="row border-top border-bottom py-3 ">
+          <div className="row border-top border-bottom py-3">
             <div className="col-md-6">
-              <p>
-                <strong>Invoice No:</strong> {invoice.invoiceNumber}
-                <br></br>
-                <strong>Invoice Date:</strong>{" "}
-                {invoice?.bill_date.split("T")[0]}
-                <br></br>
-                <strong>Payment Mode:</strong> {invoice?.paymentMode}
+              <strong>Bill To :</strong>
+
+              <p className="mb-1">
+                <strong>Name:</strong> {invoice?.cr_name}
+              </p>
+              <p className="mb-1">
+                <strong>Address:</strong> {invoice?.cr_address}
+              </p>
+              <p className="mb-1">
+                <strong>Phone:</strong> {invoice?.cr_phone_number}
               </p>
             </div>
+
             <div className="col-md-6">
-              <strong>Bill To:</strong>
-              <p className="mb-0">
-                Mr./Ms {invoice?.cr_name}
-                <br />
-                {invoice?.cr_address}
-                <br />
-                Mob - {invoice?.cr_phone_number}
+              <p>
+                <strong>Invoice No:</strong> {invoice.invoiceNumber} <br />
+                <strong>Invoice Date:</strong>{" "}
+                {invoice?.bill_date.split("T")[0]} <br />
+                <strong>Payment Mode:</strong> {invoice?.paymentMode}
               </p>
             </div>
           </div>
 
           {/* Items Table */}
           <div className="table-responsive mt-4">
-            <table className="table table-bordered ">
+            <table className="table table-bordered">
               <thead className="table-light">
                 <tr>
                   <th>#</th>
                   <th>Product</th>
                   <th>Product Code</th>
+                  <th>Warranty</th>
                   <th>Qty</th>
-                  <th>Rate</th>
-                  <th>CGST 9%</th>
-                  <th>SGST 9%</th>
-                  <th>Amount</th>
+                  <th>Price</th>
                 </tr>
               </thead>
+
               <tbody>
-                {invoice?.items.map((item, key) => {
-                  return (
-                    <tr>
-                      <td>{key + 1}</td>
-                      <td>{item?.pd_name}</td>
-                      <td>{item?.pd_code}</td>
-                      <td>{1}</td>
-                      <td>{item?.price}</td>
-                      <td>{0.0}</td>
-                      <td>{0.0}</td>
-                      <td>{item.price}</td>
-                    </tr>
-                  );
-                })}
+                {invoice?.items.map((item, key) => (
+                  <tr key={key}>
+                    <td>{key + 1}</td>
+                    <td>{item?.pd_name}</td>
+                    <td>{item?.pd_code}</td>
+                    <td>{item?.warranty}</td>
+                    <td>1</td>
+                    <td>₹ {item?.price}</td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
 
           {/* Summary */}
           <div className="row mt-3">
-            <div className="col-md-6 small">
-              <p className="mt-1">
+            <div className="col-md-7 small">
+              <p>
                 <strong>Bank Details:</strong>
                 <br />
-                A/C Name: Bhatia Telecom Smartzone
-                <br />
-                Bank: Bank of Baroda
-                <br />
+                A/C Name: Bhatia Telecom Smartzone <br />
+                Bank: Bank of Baroda <br />
                 A/C Type: Current
               </p>
+
+              <img src={myqr} alt="qr" height="80" />
+            </div>
+
+            <div className="col-md-5">
+              <table className="table table-bordered small">
+                <tbody>
+                  <tr className="fw-bold">
+                    <td className="text-center fw-bold fs-5">Total</td>
+                    <td className="text-center fw-bold fs-5">
+                      ₹ {invoice?.totalAmount}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
 
               <p>
                 <strong>Total in Words:</strong>
@@ -190,35 +210,72 @@ export default function ViewInvoice() {
                 {numberToWordsIndian(invoice?.totalAmount)} Rupees Only
               </p>
             </div>
-
-            <div className="col-md-6">
-              <table className="table table-bordered small">
-                <tbody>
-                  <tr>
-                    <td>Sub Total</td>
-                    <td className="text-end">₹ {invoice.totalAmount}</td>
-                  </tr>
-                  <tr>
-                    <td>CGST (9%)</td>
-                    <td className="text-end">₹0</td>
-                  </tr>
-                  <tr>
-                    <td>SGST (9%)</td>
-                    <td className="text-end">₹0</td>
-                  </tr>
-                  <tr className="fw-bold">
-                    <td>Total</td>
-                    <td className="text-end">₹ {invoice?.totalAmount}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
           </div>
 
+          {/* <hr /> */}
+
           {/* Footer */}
-          <div className="text-end mt-5 small">
-            <p>For Bhatia Telecom Smartzone</p>
-            <p className="fw-bold">Authorised Signatory</p>
+          <div className=" mt-3">
+            <div className="footer-top">
+              <div className="terms">
+                <h5>Terms & Conditions</h5>
+                <ul>
+                  <li>Warranty as per company policy only.</li>
+                  <li>Please keep this invoice for warranty claims.</li>
+                  <li>Accessories have no warranty unless specified.</li>
+                  <li>All disputes are subject to Kanpur jurisdiction.</li>
+                </ul>
+              </div>
+
+              <div className="text-center ">
+                <p className="">For Bhatia Telecom Smartzone</p>
+                <p className="fw-bold">Authorised Signatory</p>
+              </div>
+            </div>
+
+            {/* Brand Logos */}
+            <div className="footer-bottom">
+              <div>
+                <img src={samsung} height="70" width={"130px"} />
+                <img src={oppo} height="70" width={"130px"} />
+                <img
+                  src={vivo}
+                  height="70px"
+                  width={"100px"}
+                  className="mx-1"
+                />
+                <img src={realme} height="70" width={"120px"} />
+                <img src={itel} height="70" width={"100px"} />
+                <img src={ubon} height="70" width={"100px"} />
+              </div>
+              {/* <div className="row ">
+                <div className="col-md-2  ">
+                  <img src={vivo} height="70px" width={"100px"} />
+                </div>
+                <div className="col-md-2  ">
+                  <img src={oppo} height="70" width={"130px"} />
+                </div>
+                <div className="col-md-2 ">
+                  <img src={samsung} height="70" width={"130px"} />
+                </div>
+                <div className="col-md-2 ">
+                  <img src={realme} height="70" width={"130px"} />
+                </div>
+                <div className="col-md-2">
+                  <img src={itel} height="70" width={"120px"} />
+                </div>
+                <div className="col-md-2">
+                  <img src={ubon} height="70" width={"100px"} />
+                </div>
+              </div> */}
+
+              <div className="text-center thanks-line">
+                <p>
+                  Thank you for shopping with us! 🙏 <br />
+                  {/* This is a computer generated invoice. */}
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </div>

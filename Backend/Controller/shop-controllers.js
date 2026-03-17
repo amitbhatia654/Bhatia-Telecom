@@ -35,17 +35,17 @@ const createInvoice = async (req, res) => {
         const updatedItems = items.map((item) => {
             totalAmount += Number(item.price || 0);
 
-            let warranty_expiry = null;
-            if (item.warranty) {
-                warranty_expiry = new Date(bill_date || Date.now());
-                warranty_expiry.setMonth(
-                    warranty_expiry.getMonth() + Number(item.warranty)
-                );
-            }
+            // let warranty_expiry = null;
+            // if (item.warranty) {
+            //     warranty_expiry = new Date(bill_date || Date.now());
+            //     warranty_expiry.setMonth(
+            //         warranty_expiry.getMonth() + Number(item.warranty)
+            //     );
+            // }
 
             return {
                 ...item,
-                warranty_expiry,
+                // warranty_expiry,
             };
         });
 
@@ -106,18 +106,17 @@ const updateInvoice = async (req, res) => {
         const updatedItems = items.map((item) => {
             totalAmount += Number(item.price || 0);
 
-            let warranty_expiry = null;
+            // let warranty_expiry = null;
 
-            if (item.warranty) {
-                warranty_expiry = new Date(bill_date || invoice.bill_date);
-                warranty_expiry.setMonth(
-                    warranty_expiry.getMonth() + Number(item.warranty)
-                );
-            }
+            // if (item.warranty) {
+            //     warranty_expiry = new Date(bill_date || invoice.bill_date);
+            //     warranty_expiry.setMonth(
+            //         warranty_expiry.getMonth() + Number(item.warranty)
+            //     );
+            // }
 
             return {
                 ...item,
-                warranty_expiry,
             };
         });
 

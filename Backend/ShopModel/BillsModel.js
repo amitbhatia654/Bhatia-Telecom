@@ -62,8 +62,8 @@ const InvoiceSchema = new mongoose.Schema(
                 },
 
                 warranty: {
-                    type: Number, // months
-                    default: 0,
+                    type: String, // months
+                    default: "0",
                 },
 
                 warranty_expiry: {

@@ -526,10 +526,15 @@ export default function Billing() {
                                       onChange={props.handleChange}
                                     >
                                       <option value="">Select</option>
-                                      <option value="1">1 Month</option>
-                                      <option value="3">3 Months</option>
-                                      <option value="6">6 Months</option>
-                                      <option value="12">12 Months</option>
+                                      <option value="1 Months">1 Month</option>
+                                      <option value="2 Months">2 Month</option>
+                                      <option value="3 months">3 Months</option>
+                                      <option value="4 months">4 Months</option>
+                                      <option value="5 months">5 Months</option>
+                                      <option value="6 months">6 Months</option>
+                                      <option value="12 months">
+                                        12 Months
+                                      </option>
                                     </select>
                                   </div>
                                 </div>
