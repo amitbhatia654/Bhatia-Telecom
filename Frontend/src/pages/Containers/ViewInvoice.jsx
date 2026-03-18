@@ -3,12 +3,12 @@ import { useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 const logo = "/logo.jpeg";
 const myqr = "/myqr.jpeg";
-const vivo = "./images/vivo1.jpeg";
-const oppo = "./images/oppo.png";
-const samsung = "./images/samsung.png";
-const realme = "./images/realme.png";
-const itel = "./images/itel.png";
-const ubon = "./images/ubon.png";
+const vivo = "./vivo1.jpeg";
+const oppo = "./oppo.png";
+const samsung = "./samsung.png";
+const realme = "./realme.png";
+const itel = "./itel.png";
+const ubon = "./ubon.png";
 
 export default function ViewInvoice() {
   const navigate = useNavigate();
