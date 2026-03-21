@@ -150,105 +150,104 @@ export default function ViewInvoice() {
           </div>
 
           {/* Items Table */}
-          <div className="table-responsive mt-4">
-            <table className="table table-bordered">
-              <thead className="table-light">
-                <tr>
-                  <th>#</th>
-                  <th>Product</th>
-                  <th>Product Code</th>
-                  <th>Warranty</th>
-                  <th>Qty</th>
-                  <th>Price</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {invoice?.items.map((item, key) => (
-                  <tr key={key}>
-                    <td>{key + 1}</td>
-                    <td>{item?.pd_name}</td>
-                    <td>{item?.pd_code}</td>
-                    <td>{item?.warranty}</td>
-                    <td>1</td>
-                    <td>₹ {item?.price}</td>
+          <div className="inner-box">
+            <div className="table-responsive mt-4">
+              <table className="table table-bordered">
+                <thead className="table-light">
+                  <tr>
+                    <th>#</th>
+                    <th>Product</th>
+                    <th>Product Code</th>
+                    <th>Warranty</th>
+                    <th>Qty</th>
+                    <th>Price</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
 
-          {/* Summary */}
-          <div className="row mt-3">
-            <div className="col-md-7 small">
-              <p>
-                <strong>Bank Details:</strong>
-                <br />
-                A/C Name: Bhatia Telecom Smartzone <br />
-                Bank: Bank of Baroda <br />
-                A/C Type: Current
-              </p>
-
-              <img src={myqr} alt="qr" height="80" />
-            </div>
-
-            <div className="col-md-5">
-              <table className="table table-bordered small">
                 <tbody>
-                  <tr className="fw-bold">
-                    <td className="text-center fw-bold fs-5">Total</td>
-                    <td className="text-center fw-bold fs-5">
-                      ₹ {invoice?.totalAmount}
-                    </td>
-                  </tr>
+                  {invoice?.items.map((item, key) => (
+                    <tr key={key}>
+                      <td>{key + 1}</td>
+                      <td>{item?.pd_name}</td>
+                      <td>{item?.pd_code}</td>
+                      <td>{item?.warranty}</td>
+                      <td>1</td>
+                      <td>₹ {item?.price}</td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
+            </div>
 
-              <p>
-                <strong>Total in Words:</strong>
-                <br />
-                {numberToWordsIndian(invoice?.totalAmount)} Rupees Only
-              </p>
+            {/* Summary */}
+            <div className="row mt-3">
+              <div className="col-md-7 small">
+                <p>
+                  <strong>Bank Details:</strong>
+                  <br />
+                  A/C Name: Bhatia Telecom Smartzone <br />
+                  Bank: Bank of Baroda <br />
+                  A/C Type: Current
+                </p>
+
+                <img src={myqr} alt="qr" height="80" />
+              </div>
+
+              <div className="col-md-5">
+                <table className="table table-bordered small">
+                  <tbody>
+                    <tr className="fw-bold">
+                      <td className="text-center fw-bold fs-6">Total</td>
+                      <td className="text-center fw-bold fs-6">
+                        ₹ {invoice?.totalAmount}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <p>
+                  <strong>Total in Words:</strong>
+                  <br />
+                  {numberToWordsIndian(invoice?.totalAmount)} Rupees Only
+                </p>
+              </div>
+            </div>
+
+            {/* <hr /> */}
+
+            {/* Footer */}
+            <div className=" mt-3">
+              <div className="footer-top">
+                <div className="terms">
+                  <h5>Terms & Conditions</h5>
+                  <ul>
+                    <li>Warranty as per company policy only.</li>
+                    <li>Please keep this invoice for warranty claims.</li>
+                    <li>Accessories have no warranty unless specified.</li>
+                    <li>All disputes are subject to Kanpur jurisdiction.</li>
+                  </ul>
+                </div>
+
+                <div className="text-center ">
+                  <p className="">For Bhatia Telecom Smartzone</p>
+                  <p className="fw-bold">Authorised Signatory</p>
+                </div>
+              </div>
             </div>
           </div>
-
-          {/* <hr /> */}
-
-          {/* Footer */}
-          <div className=" mt-3">
-            <div className="footer-top">
-              <div className="terms">
-                <h5>Terms & Conditions</h5>
-                <ul>
-                  <li>Warranty as per company policy only.</li>
-                  <li>Please keep this invoice for warranty claims.</li>
-                  <li>Accessories have no warranty unless specified.</li>
-                  <li>All disputes are subject to Kanpur jurisdiction.</li>
-                </ul>
-              </div>
-
-              <div className="text-center ">
-                <p className="">For Bhatia Telecom Smartzone</p>
-                <p className="fw-bold">Authorised Signatory</p>
-              </div>
-            </div>
-            {/* test */}
-            {/* Brand Logos */}
-            <div className="footer-bottom">
-              <div>
-                <img src={samsung} height="70" width={"130px"} />
-                <img src={oppo} height="70" width={"130px"} />
-                <img
-                  src={vivo}
-                  height="70px"
-                  width={"100px"}
-                  className="mx-1"
-                />
-                <img src={realme} height="70" width={"120px"} />
-                <img src={itel} height="70" width={"100px"} />
-                <img src={ubon} height="70" width={"100px"} />
-              </div>
-              {/* <div className="row ">
+          {/* test */}
+          {/* Brand Logos */}
+        </div>
+        <div className="footer-bottom">
+          <div>
+            <img src={samsung} height="70" width={"130px"} />
+            <img src={oppo} height="70" width={"130px"} />
+            <img src={vivo} height="70px" width={"100px"} className="mx-1" />
+            <img src={realme} height="70" width={"120px"} />
+            <img src={itel} height="70" width={"100px"} />
+            <img src={ubon} height="70" width={"100px"} />
+          </div>
+          {/* <div className="row ">
                 <div className="col-md-2  ">
                   <img src={vivo} height="70px" width={"100px"} />
                 </div>
@@ -269,13 +268,11 @@ export default function ViewInvoice() {
                 </div>
               </div> */}
 
-              <div className="text-center thanks-line">
-                <p>
-                  Thank you for shopping with us! 🙏 <br />
-                  {/* This is a computer generated invoice. */}
-                </p>
-              </div>
-            </div>
+          <div className="text-center thanks-line">
+            <p>
+              Thank you for shopping with us! 🙏 <br />
+              {/* This is a computer generated invoice. */}
+            </p>
           </div>
         </div>
       </div>

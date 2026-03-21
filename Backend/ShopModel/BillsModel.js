@@ -1,20 +1,17 @@
-const mongoose = require("mongoose")
-
-
-
+const mongoose = require("mongoose");
 
 const InvoiceSchema = new mongoose.Schema(
     {
         // ---------- Customer Details ----------
         cr_name: {
             type: String,
-            required: true,
+            // required: true,
             trim: true,
         },
 
         cr_phone_number: {
             type: String,
-            required: true,
+            // required: true,
             minlength: 10,
             maxlength: 10,
         },
@@ -22,6 +19,13 @@ const InvoiceSchema = new mongoose.Schema(
         cr_address: {
             type: String,
             trim: true,
+        },
+
+        // 🟢 NEW: Customer Reference
+        customerId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Customer",
+            required: true, // 👈 important (har invoice kisi customer se linked hoga)
         },
 
         // ---------- Invoice Info ----------
@@ -38,10 +42,10 @@ const InvoiceSchema = new mongoose.Schema(
 
         invoiceNumber: {
             type: String,
-            // unique: true,
+            unique: true, // 👈 better (duplicate avoid)
         },
 
-        // ---------- Products (Embedded) ----------
+        // ---------- Products ----------
         items: [
             {
                 pd_name: {
@@ -62,7 +66,7 @@ const InvoiceSchema = new mongoose.Schema(
                 },
 
                 warranty: {
-                    type: String, // months
+                    type: String,
                     default: "0",
                 },
 
@@ -87,8 +91,6 @@ const InvoiceSchema = new mongoose.Schema(
     {
         timestamps: true,
     }
-)
+);
 
-
-const Invoice = new mongoose.model("Invoice", InvoiceSchema)
-module.exports = Invoice
+module.exports = mongoose.model("Invoice", InvoiceSchema);

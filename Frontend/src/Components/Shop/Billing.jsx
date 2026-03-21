@@ -51,6 +51,10 @@ export default function Billing() {
   const [totalCount, setTotalCount] = useState(0);
   const [allMembers, setAllMembers] = useState([]);
   const [allTrainers, setAllTrainers] = useState([]);
+
+  const [customerQuery, setCustomerQuery] = useState("");
+  const [customerList, setCustomerList] = useState([]);
+  const [showDropdown, setShowDropdown] = useState(false);
   const totalPages = Math.ceil(totalCount / rowSize);
 
   const [confirmModalData, setConfirmModalData] = useState({
@@ -212,6 +216,40 @@ export default function Billing() {
       });
     });
   };
+
+  const handleSelectCustomer = (customer, props) => {
+    props.setFieldValue("customerId", customer._id || "");
+    props.setFieldValue("cr_name", customer.name || "");
+    props.setFieldValue(
+      "cr_phone_number",
+      customer.phone_number?.toString() || "",
+    );
+    props.setFieldValue("cr_address", customer.address || "");
+
+    setCustomerQuery(customer.name);
+    setShowDropdown(false);
+  };
+
+  const handleCustomerSearch = async (value) => {
+    setCustomerQuery(value);
+
+    if (!value) {
+      setCustomerList([]);
+      return;
+    }
+
+    try {
+      const res = await axiosInstance.get(`/api/search-cr?query=${value}`);
+
+      // const res = await axiosInstance.get("/api/get-invoices", {
+      //   params: { search, rowSize, currentPage },
+      // });
+      setCustomerList(res.data);
+      setShowDropdown(true);
+    } catch (err) {
+      console.error(err);
+    }
+  };
   return (
     <>
       <div className="d-flex justify-content-between">
@@ -359,18 +397,18 @@ export default function Billing() {
       {showModal && (
         <Modal
           setShowModal={setShowModal}
-          //   otherFunc={setEditMember}
-          title={`${editMember._id ? "Edit" : "Create"}  Invoice`}
-          handleSubmit={handleSubmit}
+          title={`${editMember._id ? "Edit" : "Create"} Invoice`}
         >
           <Formik
             initialValues={
               editMember._id
-                ? {
-                    ...editMember,
-                  }
+                ? { ...editMember }
                 : {
                     paymentMode: "cash",
+                    customerId: "",
+                    cr_name: "",
+                    cr_phone_number: "",
+                    cr_address: "",
                     bill_date: new Date(),
                     items: [
                       {
@@ -382,261 +420,221 @@ export default function Billing() {
                     ],
                   }
             }
-            // validationSchema={addMember}
-            enableReinitialize={true}
+            // enableReinitialize
             onSubmit={(values) => handleSubmit(values)}
           >
             {(props) => (
-              <Form onSubmit={props.handleSubmit}>
-                <div className=" ">
-                  <div className="container">
-                    <div className="row ">
-                      <div className="col-md-6">
-                        <div className="form-group">
-                          <label htmlFor="exampleInputEmail1">
-                            Customer Name
-                          </label>
-                          <input
-                            type="text"
-                            className="form-control"
-                            id="exampleInputEmail1"
-                            placeholder="Enter Name"
-                            value={props.values.cr_name}
-                            name="cr_name"
-                            onChange={props.handleChange}
-                          />
-
-                          <ErrorMessage
-                            name="cr_name"
-                            component="div"
-                            style={{ color: "red" }}
-                          />
-                        </div>
-                      </div>
-
-                      <div className="col-md-6">
-                        <div className="form-group">
-                          <label htmlFor="phone-number">Phone Number</label>
-                          <input
-                            type="number"
-                            className="form-control"
-                            id="phone-number"
-                            placeholder="Enter Phone Number"
-                            value={props.values.cr_phone_number}
-                            name="cr_phone_number"
-                            // onChange={props.handleChange}
-                            onChange={(e) => {
-                              if (e.target.value.length < 11)
-                                props.setFieldValue(
-                                  "cr_phone_number",
-                                  e.target.value,
-                                );
-                            }}
-                          />
-                        </div>
-                        <ErrorMessage
-                          name="cr_phone_number"
-                          component="div"
-                          style={{ color: "red" }}
-                        />
-                      </div>
-
-                      <div className="col-md-6 ">
-                        <div className="form-group">
-                          <label htmlFor="address">Address</label>
-                          <input
-                            type="text"
-                            className="form-control"
-                            id="address"
-                            placeholder="Enter Address"
-                            value={props.values.cr_address}
-                            name="cr_address"
-                            onChange={props.handleChange}
-                          />
-                        </div>
-                        <ErrorMessage
-                          name="cr_address"
-                          component="div"
-                          style={{ color: "red" }}
-                        />
-                      </div>
-
-                      <hr className="my-3" />
-                      <h5 style={{ color: "#47478C" }}>Products</h5>
-
-                      <FieldArray name="items">
-                        {({ push, remove }) => (
-                          <>
-                            {props.values?.items?.map((item, index) => (
-                              <div className="row mt-2" key={index}>
-                                {/* Product Name */}
-
-                                <div className="col-md-3">
-                                  <div className="form-group">
-                                    <label>Product Name</label>
-                                    <input
-                                      type="text"
-                                      className="form-control"
-                                      name={`items.${index}.pd_name`}
-                                      value={item.pd_name}
-                                      placeholder="Product Name"
-                                      onChange={props.handleChange}
-                                    />
-                                  </div>
-                                </div>
-
-                                {/* Product Model */}
-                                <div className="col-md-3">
-                                  <div className="form-group">
-                                    <label>Product Model</label>
-                                    <input
-                                      type="text"
-                                      className="form-control"
-                                      name={`items.${index}.pd_code`}
-                                      value={item.pd_code}
-                                      placeholder="Model / Code"
-                                      onChange={props.handleChange}
-                                    />
-                                  </div>
-                                </div>
-
-                                {/* Product Price */}
-                                <div className="col-md-3">
-                                  <div className="form-group">
-                                    <label>Price</label>
-                                    <input
-                                      type="number"
-                                      className="form-control"
-                                      name={`items.${index}.price`}
-                                      value={item.price}
-                                      placeholder="Price"
-                                      onChange={props.handleChange}
-                                    />
-                                  </div>
-                                </div>
-
-                                {/* Product Warranty */}
-                                <div className="col-md-3">
-                                  <div className="form-group">
-                                    <label>Warranty</label>
-                                    <select
-                                      className="form-control"
-                                      name={`items.${index}.warranty`}
-                                      value={item.warranty}
-                                      onChange={props.handleChange}
-                                    >
-                                      <option value="">Select</option>
-                                      <option value="1 Months">1 Month</option>
-                                      <option value="2 Months">2 Month</option>
-                                      <option value="3 months">3 Months</option>
-                                      <option value="4 months">4 Months</option>
-                                      <option value="5 months">5 Months</option>
-                                      <option value="6 months">6 Months</option>
-                                      <option value="12 months">
-                                        12 Months
-                                      </option>
-                                    </select>
-                                  </div>
-                                </div>
-
-                                {/* Remove Button */}
-                                <div className="col-md-1 d-flex align-items-end">
-                                  {props.values.items.length > 1 && (
-                                    <button
-                                      type="button"
-                                      className="btn btn-danger"
-                                      onClick={() => remove(index)}
-                                    >
-                                      ✕
-                                    </button>
-                                  )}
-                                </div>
-                              </div>
-                            ))}
-
-                            {/* Add Row Button */}
-                            <div className="mt-3">
-                              <button
-                                type="button"
-                                className="btn btn-outline-primary"
-                                onClick={() =>
-                                  push({
-                                    pd_name: "",
-                                    pd_code: "",
-                                    price: "",
-                                  })
-                                }
-                              >
-                                ➕ Add Product
-                              </button>
-                            </div>
-                          </>
-                        )}
-                      </FieldArray>
-
-                      <div className="col-md-6 mt-3">
-                        <div className="form-group">
-                          <label htmlFor="planRenew">Bill Date</label>
-                          <input
-                            type="date"
-                            className="form-control"
-                            id="planRenew"
-                            name="planRenew"
-                            value={
-                              props.values?.bill_date
-                                ? formatDateToInput(props.values.bill_date)
-                                : ""
-                            }
-                            onChange={(e) => {
-                              props.setFieldValue("bill_date", e.target.value);
-                            }}
-                          />
-                        </div>
-                        <ErrorMessage
-                          name="planRenew"
-                          component="div"
-                          style={{ color: "red" }}
-                        />
-                      </div>
-
-                      <div className="col-md-6 mt-3">
-                        <div className="form-group">
-                          <label htmlFor="membership">Payment Mode</label>
-                          <select
-                            className="form-control"
-                            id="paymentMode"
-                            name="paymentMode"
-                            value={props.values.paymentMode} // Ensure it's `value`, not `values`
-                            onChange={(e) =>
-                              props.setFieldValue("paymentMode", e.target.value)
-                            } // Update state
-                          >
-                            <option value={"cash"}>Cash</option>
-                            <option value={"online"}>Online</option>
-                          </select>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="d-flex justify-content-center mt-4">
-                    <Button
-                      variant="outlined"
-                      type="submit"
-                      sx={{
-                        my: 1,
-                        color: "#47478c",
-                        backgroundColor: "white",
-                        fontSize: "16px",
-                      }}
-                      disabled={submitLoading}
+              <Form>
+                <div className="container">
+                  <div className="row">
+                    {/* 🔍 SEARCH CUSTOMER (Formik controlled) */}
+                    <div
+                      className="col-md-12 mb-2"
+                      style={{ position: "relative" }}
                     >
-                      {submitLoading ? (
-                        <span className="spinner-border "></span>
-                      ) : (
-                        "submit"
-                      )}{" "}
-                    </Button>
+                      <label>Search Customer</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        name="cr_name"
+                        placeholder="Search by name or phone"
+                        value={props.values.cr_name}
+                        onChange={(e) => {
+                          props.setFieldValue("cr_name", e.target.value);
+                          props.setFieldValue("customerId", "");
+                          props.setFieldValue("cr_phone_number", "");
+                          props.setFieldValue("cr_address", "");
+
+                          handleCustomerSearch(e.target.value);
+                        }}
+                        onBlur={() =>
+                          setTimeout(() => setShowDropdown(false), 200)
+                        }
+                      />
+
+                      {/* ✅ DROPDOWN */}
+                      {showDropdown && customerList.length > 0 && (
+                        <div className="dropdown-box">
+                          {customerList.map((cust) => (
+                            <div
+                              key={cust._id}
+                              className="dropdown-item"
+                              onMouseDown={(e) => {
+                                e.preventDefault(); // 🔥 important
+                                handleSelectCustomer(cust, props);
+                              }}
+                            >
+                              {cust.name} - {cust.phone_number}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* 📞 PHONE */}
+                    <div className="col-md-6">
+                      <label>Phone Number</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        name="cr_phone_number"
+                        value={props.values.cr_phone_number}
+                        disabled={props.values.customerId}
+                        onChange={(e) => {
+                          if (e.target.value.length <= 10) {
+                            props.setFieldValue(
+                              "cr_phone_number",
+                              e.target.value,
+                            );
+                          }
+                        }}
+                      />
+                    </div>
+
+                    {/* 📍 ADDRESS */}
+                    <div className="col-md-6">
+                      <label>Address</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        name="cr_address"
+                        value={props.values.cr_address}
+                        disabled={props.values.customerId}
+                        onChange={props.handleChange}
+                      />
+                    </div>
+
+                    <hr className="my-3" />
+                    {/* <h5 style={{ color: "#47478C" }} className="text-center mt-4">Products</h5> */}
+
+                    {/* 📦 PRODUCTS */}
+                    <FieldArray name="items">
+                      {({ push, remove }) => (
+                        <>
+                          {props.values.items.map((item, index) => (
+                            <div className="row mt-2" key={index}>
+                              <div className="col-md-3">
+                                <label>Product Name</label>
+                                <input
+                                  type="text"
+                                  className="form-control"
+                                  name={`items.${index}.pd_name`}
+                                  value={item.pd_name}
+                                  onChange={props.handleChange}
+                                  placeholder="Product Name"
+                                />
+                              </div>
+
+                              <div className="col-md-3">
+                                <label>code</label>
+                                <input
+                                  type="text"
+                                  className="form-control"
+                                  name={`items.${index}.pd_code`}
+                                  value={item.pd_code}
+                                  onChange={props.handleChange}
+                                  placeholder="Model"
+                                />
+                              </div>
+
+                              <div className="col-md-3">
+                                <label>Price</label>
+                                <input
+                                  type="number"
+                                  className="form-control"
+                                  name={`items.${index}.price`}
+                                  value={item.price}
+                                  onChange={props.handleChange}
+                                  placeholder="Price"
+                                />
+                              </div>
+
+                              <div className="col-md-3">
+                                <label>warranty</label>
+                                <select
+                                  className="form-control"
+                                  name={`items.${index}.warranty`}
+                                  value={item.warranty}
+                                  onChange={props.handleChange}
+                                >
+                                  <option value="">Select</option>
+                                  <option value="1 Month">1 Month</option>
+                                  <option value="3 Months">3 Months</option>
+                                  <option value="6 Months">6 Months</option>
+                                  <option value="12 Months">12 Months</option>
+                                </select>
+                              </div>
+
+                              {props.values.items.length > 1 && (
+                                <div className="col-md-1 mt-2">
+                                  <button
+                                    type="button"
+                                    className="btn btn-danger"
+                                    onClick={() => remove(index)}
+                                  >
+                                    ✕
+                                  </button>
+                                </div>
+                              )}
+                            </div>
+                          ))}
+
+                          <button
+                            type="button"
+                            className="btn btn-outline-primary mt-3"
+                            onClick={() =>
+                              push({
+                                pd_name: "",
+                                pd_code: "",
+                                price: "",
+                                warranty: "",
+                              })
+                            }
+                          >
+                            ➕ Add Product
+                          </button>
+                        </>
+                      )}
+                    </FieldArray>
+
+                    {/* 📅 BILL DATE */}
+                    <div className="col-md-6 mt-3">
+                      <label>Bill Date</label>
+                      <input
+                        type="date"
+                        className="form-control"
+                        value={
+                          props.values.bill_date
+                            ? formatDateToInput(props.values.bill_date)
+                            : ""
+                        }
+                        onChange={(e) =>
+                          props.setFieldValue("bill_date", e.target.value)
+                        }
+                      />
+                    </div>
+
+                    {/* 💰 PAYMENT */}
+                    <div className="col-md-6 mt-3">
+                      <label>Payment Mode</label>
+                      <select
+                        className="form-control"
+                        value={props.values.paymentMode}
+                        onChange={(e) =>
+                          props.setFieldValue("paymentMode", e.target.value)
+                        }
+                      >
+                        <option value="cash">Cash</option>
+                        <option value="online">Online</option>
+                      </select>
+                    </div>
+
+                    {/* 🚀 SUBMIT */}
+                    <div className="text-center mt-4">
+                      <button className="btn btn-primary" type="submit">
+                        Submit
+                      </button>
+                    </div>
                   </div>
                 </div>
               </Form>
@@ -700,6 +698,8 @@ export default function Billing() {
                   </p>
                 </div>
               </div>
+
+             
 
               {/* Items Table */}
               <div className="table-responsive mt-4">
