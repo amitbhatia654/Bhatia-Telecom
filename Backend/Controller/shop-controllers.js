@@ -10,7 +10,7 @@ const Customer = require("../ShopModel/CustomerModel");
 // helper – invoice number generator
 const generateInvoiceNumber = async () => {
     const count = await Invoice.countDocuments();
-    return `INV-${new Date().getFullYear()}-${count + 1}`;
+    return `INV-${new Date().getFullYear()}-${count + 3}`;
 };
 
 // const createInvoice = async (req, res) => {
@@ -104,6 +104,7 @@ const createInvoice = async (req, res) => {
         });
 
         const invoiceNumber = await generateInvoiceNumber();
+        console.log(invoiceNumber, 'invice')
 
         let finalCustomer = null;
 
@@ -263,7 +264,8 @@ const updateInvoice = async (req, res) => {
 const getInvoices = async (req, res) => {
     try {
 
-        const response = await Invoice.find()
+        // const response = await Invoice.find()
+        const response = await Invoice.find().sort({ createdAt: -1 });
 
         res.status(200).json({ response });
     } catch (error) {

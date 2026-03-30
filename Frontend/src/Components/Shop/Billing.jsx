@@ -150,7 +150,7 @@ export default function Billing() {
 
     setShowModal(false);
     if (res.status == 201) {
-      allMembers.push(res.data.invoiceDetails);
+      allMembers.unshift(res.data.invoiceDetails);
       setShowModal(false);
     }
   };
@@ -698,8 +698,6 @@ export default function Billing() {
                   </p>
                 </div>
               </div>
-
-             
 
               {/* Items Table */}
               <div className="table-responsive mt-4">

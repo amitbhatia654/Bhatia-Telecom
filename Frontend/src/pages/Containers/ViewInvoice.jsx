@@ -143,7 +143,15 @@ export default function ViewInvoice() {
               <p>
                 <strong>Invoice No:</strong> {invoice.invoiceNumber} <br />
                 <strong>Invoice Date:</strong>{" "}
-                {invoice?.bill_date.split("T")[0]} <br />
+                {new Date(invoice?.bill_date).toLocaleString("en-IN", {
+                  day: "numeric",
+                  month: "numeric",
+                  year: "numeric",
+                  hour: "numeric",
+                  minute: "numeric",
+                  hour12: true,
+                })}
+                <br></br>
                 <strong>Payment Mode:</strong> {invoice?.paymentMode}
               </p>
             </div>
