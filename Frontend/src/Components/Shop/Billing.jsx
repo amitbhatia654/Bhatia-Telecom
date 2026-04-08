@@ -6,14 +6,12 @@ import {
   TextField,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
-// import Modal from "./HelperPages/Modal";
 import Modal from "../../pages/HelperPages/Modal";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import { Formik, ErrorMessage, Form, FieldArray, Field } from "formik";
 import axiosInstance from "../../ApiManager";
 const dp_image = "/user.jpg";
 const logo = "/logo.jpeg";
-import FitnessCenterIcon from "@mui/icons-material/FitnessCenter";
 import toast from "react-hot-toast";
 import { addMember } from "../../assets/FormSchema";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
@@ -50,7 +48,6 @@ export default function Billing() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [allMembers, setAllMembers] = useState([]);
-  const [allTrainers, setAllTrainers] = useState([]);
 
   const [customerQuery, setCustomerQuery] = useState("");
   const [customerList, setCustomerList] = useState([]);
@@ -75,15 +72,6 @@ export default function Billing() {
     fontSize: "14px",
   };
 
-  function convertFileToBase64(file) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = (error) => reject(error);
-    });
-  }
-
   const handleSubmit = async (values) => {
     setSubmitLoading(true);
 
@@ -98,45 +86,8 @@ export default function Billing() {
       : await axiosInstance.post(`api/create-invoice`, data);
 
     setSubmitLoading(false);
-    // if (res.status == 200) {
-    //   if (editMember._id) {
-    //     if (res.data.memberResult.status == "active") {
-    //       const updatedMember = allMembers.map((folder) => {
-    //         if (folder._id == values._id) {
-    //           return res.data.memberResult;
-    //         }
-    //         return folder;
-    //       });
-    //       setAllMembers(updatedMember);
-    //     } else {
-    //       const updatedMembers = allMembers.filter(
-    //         (member) => member._id !== res.data.memberResult._id,
-    //       );
-    //       setAllMembers(updatedMembers);
-    //     }
-    //   } else {
-    //     if (
-    //       allMembers.length < rowSize &&
-    //       res.data.memberResult.status == "active"
-    //     )
-    //       allMembers.push(res.data.memberResult);
-    //     else {
-    //       const updatedMembers = allMembers.filter(
-    //         (member) => member._id !== res.data.memberResult._id,
-    //       );
-    //       setAllMembers(updatedMembers);
-    //     }
-    //   }
-    //   toast.success(res.data.message);
-    //   setEditMember({});
-    // }
 
     if (editMember._id) {
-      // const updatedMembers = allMembers.filter(
-      //   (member) => member._id !== res.data.invoiceDetails._id,
-      // );
-      // setAllMembers(updatedMembers);
-
       const updatedMember = allMembers.map((folder) => {
         if (folder._id == values._id) {
           return res.data.invoiceDetails;
@@ -145,8 +96,6 @@ export default function Billing() {
       });
       setAllMembers(updatedMember);
     }
-
-    console.log(res, "the res is ");
 
     setShowModal(false);
     if (res.status == 201) {
@@ -186,21 +135,6 @@ export default function Billing() {
     }
     setloading(false);
   };
-
-  const fetchTrainersList = async () => {
-    const res = await axiosInstance.get("/api/gym/trainers-list", {
-      params: {},
-    });
-    if (res.status == 200) {
-      setAllTrainers(res.data.response);
-    } else {
-      setAllTrainers([]);
-    }
-  };
-
-  useEffect(() => {
-    fetchTrainersList();
-  }, []);
 
   useEffect(() => {
     fetchData();
@@ -410,6 +344,7 @@ export default function Billing() {
                     cr_phone_number: "",
                     cr_address: "",
                     bill_date: new Date(),
+                    isGst: "",
                     items: [
                       {
                         pd_name: "",
@@ -429,7 +364,7 @@ export default function Billing() {
                   <div className="row">
                     {/* 🔍 SEARCH CUSTOMER (Formik controlled) */}
                     <div
-                      className="col-md-12 mb-2"
+                      className="col-md-6 mb-2"
                       style={{ position: "relative" }}
                     >
                       <label>Search Customer</label>
@@ -492,7 +427,7 @@ export default function Billing() {
                     </div>
 
                     {/* 📍 ADDRESS */}
-                    <div className="col-md-6">
+                    {/* <div className="col-md-6">
                       <label>Address</label>
                       <input
                         type="text"
@@ -502,7 +437,7 @@ export default function Billing() {
                         disabled={props.values.customerId}
                         onChange={props.handleChange}
                       />
-                    </div>
+                    </div> */}
 
                     <hr className="my-3" />
                     {/* <h5 style={{ color: "#47478C" }} className="text-center mt-4">Products</h5> */}
@@ -558,6 +493,7 @@ export default function Billing() {
                                   onChange={props.handleChange}
                                 >
                                   <option value="">Select</option>
+                                  <option value="NA">Na</option>
                                   <option value="1 Month">1 Month</option>
                                   <option value="3 Months">3 Months</option>
                                   <option value="6 Months">6 Months</option>
@@ -582,6 +518,7 @@ export default function Billing() {
                           <button
                             type="button"
                             className="btn btn-outline-primary mt-3"
+                            disabled={props.values.items.length > 3}
                             onClick={() =>
                               push({
                                 pd_name: "",
@@ -629,10 +566,27 @@ export default function Billing() {
                       </select>
                     </div>
 
+                    <div className="col-md-6 mt-3">
+                      <label>Gst Bill</label>
+                      <input
+                        type="checkbox"
+                        className="mx-2"
+                        name="isGst"
+                        value={props.values.paymentMode}
+                        onChange={(e) => {
+                          props.setFieldValue("isGst", e.target.checked);
+                        }}
+                      />
+                    </div>
+
                     {/* 🚀 SUBMIT */}
                     <div className="text-center mt-4">
-                      <button className="btn btn-primary" type="submit">
-                        Submit
+                      <button
+                        className="btn btn-primary"
+                        type="submit"
+                        disabled={submitLoading}
+                      >
+                        {submitLoading ? "Submitting please Wait" : "Submit"}
                       </button>
                     </div>
                   </div>

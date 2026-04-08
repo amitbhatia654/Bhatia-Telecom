@@ -54,6 +54,10 @@ export default function ViewInvoice() {
       "Ninety",
     ];
 
+    const hasWarranty = invoice?.items?.some(
+      (item) => item?.warranty && item?.warranty !== "",
+    );
+
     const getWords = (n) => {
       if (n < 20) return ones[n];
       if (n < 100)
@@ -117,10 +121,10 @@ export default function ViewInvoice() {
           </div>
 
           {/* Invoice Title */}
-          <div className="row border text-center fw-bold py-1">
+          <div className="row border text-center  py-1">
             <div className="col-md-4"></div>
-            <div className="col-md-4">INVOICE</div>
-            <div className="col-md-4 text-end">Original For Receipt</div>
+            <div className="col-md-4 fw-bold">INVOICE</div>
+            <div className="col-md-4 text-end">Original Copy</div>
           </div>
 
           {/* Invoice Info */}
@@ -128,12 +132,12 @@ export default function ViewInvoice() {
             <div className="col-md-6">
               <strong>Bill To :</strong>
 
-              <p className="mb-1">
+              <p className="mb-1 ">
                 <strong>Name:</strong> {invoice?.cr_name}
               </p>
-              <p className="mb-1">
+              {/* <p className="mb-1">
                 <strong>Address:</strong> {invoice?.cr_address}
-              </p>
+              </p> */}
               <p className="mb-1">
                 <strong>Phone:</strong> {invoice?.cr_phone_number}
               </p>
@@ -165,8 +169,11 @@ export default function ViewInvoice() {
                   <tr>
                     <th>#</th>
                     <th>Product</th>
-                    <th>Product Code</th>
-                    <th>Warranty</th>
+                    <th>Model</th>
+                    {invoice?.items?.some(
+                      (item) => item?.warranty && item?.warranty !== "NA",
+                    ) && <th>Warranty</th>}
+                    {/* {console.log(invoice)} */}
                     <th>Qty</th>
                     <th>Price</th>
                   </tr>
@@ -178,7 +185,10 @@ export default function ViewInvoice() {
                       <td>{key + 1}</td>
                       <td>{item?.pd_name}</td>
                       <td>{item?.pd_code}</td>
-                      <td>{item?.warranty}</td>
+                      {/* {console.log(invoice)} */}
+                      {invoice?.items?.some(
+                        (item) => item?.warranty && item?.warranty !== "NA",
+                      ) && <td>{item?.warranty}</td>}
                       <td>1</td>
                       <td>₹ {item?.price}</td>
                     </tr>
