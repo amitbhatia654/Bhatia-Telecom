@@ -264,12 +264,37 @@ const updateInvoice = async (req, res) => {
 const getInvoices = async (req, res) => {
     try {
 
-        // const response = await Invoice.find()
-        const response = await Invoice.find().sort({ createdAt: -1 });
+        const { search } = req.query;
+
+        let filter = {};
+
+        // agar search value hai tab search karo
+        if (search) {
+            filter = {
+                $or: [
+                    {
+                        cr_phone_number: {
+                            $regex: search,
+                            $options: "i"
+                        }
+                    },
+                    {
+                        cr_name: {
+                            $regex: search,
+                            $options: "i"
+                        }
+                    }
+                ]
+            };
+        }
+
+        const response = await Invoice.find(filter).sort({ createdAt: -1 });
 
         res.status(200).json({ response });
+
     } catch (error) {
-        console.error("Error fetching Invoices:", error); // Log the error for debugging
+        console.error("Error fetching Invoices:", error);
+
         res.status(500).send("Invoice not found");
     }
 };

@@ -64,6 +64,12 @@ export default function Billing() {
     color: "#fff",
     border: "1px solid #e0e0e0",
     textAlign: "center",
+    fontWeight: "bold",
+    backgroundColor: "#47478C",
+    color: "#fff",
+    position: "sticky",
+    top: 0,
+    zIndex: 100,
   };
 
   const bodyStyle = {
@@ -224,7 +230,7 @@ export default function Billing() {
       <div className="">
         <div
           className="scrollable-container"
-          style={{ minHeight: "75.5vh", maxHeight: "75.5vh" }}
+          // style={{ minHeight: "75.5vh", maxHeight: "75.5vh" }}
         >
           <div className="d-flex flex-wrap mt-1">
             {loading ? (
@@ -242,6 +248,7 @@ export default function Billing() {
                 sx={{
                   borderRadius: 2,
                   boxShadow: 3,
+                  maxHeight: "75vh",
                 }}
               >
                 <Table aria-label="invoice table">
