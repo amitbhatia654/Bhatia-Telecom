@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Grid,
@@ -16,13 +16,30 @@ import {
   Select,
   MenuItem,
 } from "@mui/material";
+import axiosInstance from "../../ApiManager";
 
 export default function Main_dashBoard() {
+  const [invoiceData, setInvoiceData] = useState("");
+  const fetchData = async () => {
+    const res = await axiosInstance.get("/api/dashboard-details");
+    if (res.status == 200) {
+      setInvoiceData(res.data.data);
+    } else {
+      setInvoiceData([]);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
   const cards = [
-    { title: "Today Sales", value: "₹12,540" },
-    { title: "Monthly Sales", value: "₹2,45,000" },
-    { title: "Total Bills", value: "182" },
-    { title: "Profit Today", value: "₹3,240" },
+    { title: "Today Sales", value: `₹ ${invoiceData.currentDaySale ?? "0"}` },
+    {
+      title: "Monthly Sales",
+      value: `₹ ${invoiceData.currentMonthSale ?? "0"}`,
+    },
+    { title: "Total Bills", value: `₹ ${invoiceData.TotalInvoice ?? "0"}` },
+    // { title: "Profit Today", value: "₹3,240" },
   ];
 
   const topProducts = [

@@ -17,6 +17,8 @@ router.route('/get-invoices').get(AuthMiddleWare, shopController.getInvoices)
 router.route('/create-repair').post(AuthMiddleWare, shopController.createRepair)
 
 router.route('/search-cr').get(AuthMiddleWare, shopController.searchCustomers)
+router.route('/dashboard-details').get(AuthMiddleWare, shopController.dashboardDetails)
+
 
 
 

@@ -336,6 +336,52 @@ const searchCustomers = async (req, res) => {
     }
 };
 
+const dashboardDetails = async (req, res) => {
+    try {
+        const invoices = await Invoice.find();
+
+        const currentDate = new Date();
+
+        const currentMonthSale = invoices
+            .filter((invoice) => {
+                const billDate = new Date(invoice.bill_date);
+
+                return (
+                    billDate.getMonth() === currentDate.getMonth() &&
+                    billDate.getFullYear() === currentDate.getFullYear()
+                );
+            })
+            .reduce((total, invoice) => total + invoice.totalAmount, 0);
+
+        const currentDaySale = invoices
+            .filter((invoice) => {
+                const billDate = new Date(invoice.bill_date);
+
+                return (
+                    billDate.getDate() === currentDate.getDate() &&
+                    billDate.getMonth() === currentDate.getMonth() &&
+                    billDate.getFullYear() === currentDate.getFullYear()
+                );
+            })
+            .reduce((total, invoice) => total + invoice.totalAmount, 0);
+
+        const TotalInvoice = invoices.length
+
+        let data = { currentMonthSale, currentDaySale, TotalInvoice }
+
+
+        res.status(200).json({
+            success: true,
+            data
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message,
+        });
+    }
+};
+
 
 
 const createRepair = async (req, res) => {
@@ -350,4 +396,4 @@ const createRepair = async (req, res) => {
 
 
 
-module.exports = { createInvoice, getInvoices, createRepair, updateInvoice, searchCustomers }
+module.exports = { createInvoice, getInvoices, createRepair, updateInvoice, searchCustomers, dashboardDetails }
