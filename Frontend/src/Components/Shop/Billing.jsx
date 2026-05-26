@@ -85,8 +85,6 @@ export default function Billing() {
       ...values,
     };
 
-    // return console.log(data, "the data is ");
-
     const res = editMember._id
       ? await axiosInstance.put(`api/update-invoice`, data)
       : await axiosInstance.post(`api/create-invoice`, data);
@@ -102,6 +100,51 @@ export default function Billing() {
       });
       setAllMembers(updatedMember);
     }
+
+    
+
+    const itemsText = data?.items
+      ?.map(
+        (item, index) =>
+          `${index + 1}. ${item.pd_name} (${item.pd_code}) - ₹${item.price}`,
+      )
+      .join("\n");
+
+    const whatsappMessage = `
+🧾 *Bhatia Telecom Smartzone*
+
+Hello *${data?.cr_name} Ji* 👋
+
+✅ Your Invoice Generated Successfully
+
+📄 Invoice No: ${res.data.invoiceDetails?.invoiceNumber}
+
+📅 Date: ${new Date(data?.bill_date).toLocaleDateString("en-IN")}
+
+📱 Products:
+${itemsText}
+
+💰 Total Amount: ₹${res.data.invoiceDetails?.totalAmount}
+
+💳 Payment Mode: ${data?.paymentMode}
+
+🙏 Thank you for shopping with us.
+
+📍 Bhatia Telecom Smartzone
+Geeta Nagar Crossing, Kanpur
+Infront of Metro Pillar No. 187
+
+📞 8726773631
+`;
+
+    const phone = data?.cr_phone_number?.replace(/\D/g, "");
+
+    window.open(
+      `https://api.whatsapp.com/send?phone=91${phone}&text=${encodeURIComponent(
+        whatsappMessage,
+      )}`,
+      "_blank",
+    );
 
     setShowModal(false);
     if (res.status == 201) {
@@ -181,9 +224,6 @@ export default function Billing() {
     try {
       const res = await axiosInstance.get(`/api/search-cr?query=${value}`);
 
-      // const res = await axiosInstance.get("/api/get-invoices", {
-      //   params: { search, rowSize, currentPage },
-      // });
       setCustomerList(res.data);
       setShowDropdown(true);
     } catch (err) {
@@ -262,10 +302,11 @@ export default function Billing() {
                       }
                     >
                       <TableCell sx={headStyle}>S.No.</TableCell>
+                      <TableCell sx={headStyle}>Invoice Number</TableCell>
+                      <TableCell sx={headStyle}>Invoice Date</TableCell>
                       <TableCell sx={headStyle}>Customer Name</TableCell>
                       <TableCell sx={headStyle}>Customer Contact</TableCell>
-                      <TableCell sx={headStyle}>Bill Date</TableCell>
-                      <TableCell sx={headStyle}>Items</TableCell>
+                      <TableCell sx={headStyle}>Total Items</TableCell>
                       <TableCell sx={headStyle}>Bill Amount</TableCell>
                       <TableCell sx={headStyle}>Action</TableCell>
                     </TableRow>
@@ -275,13 +316,18 @@ export default function Billing() {
                     {allMembers.map((row, index) => (
                       <TableRow key={row._id} hover>
                         <TableCell sx={bodyStyle}>{index + 1}</TableCell>
-                        <TableCell sx={bodyStyle}>{row.cr_name}</TableCell>
                         <TableCell sx={bodyStyle}>
-                          {row.cr_phone_number}
+                          {row.invoiceNumber}
                         </TableCell>
                         <TableCell sx={bodyStyle}>
                           {new Date(row.bill_date).toLocaleDateString()}
                         </TableCell>
+
+                        <TableCell sx={bodyStyle}>{row.cr_name}</TableCell>
+                        <TableCell sx={bodyStyle}>
+                          {row.cr_phone_number}
+                        </TableCell>
+
                         <TableCell sx={bodyStyle}>
                           {row.items?.length}
                         </TableCell>
