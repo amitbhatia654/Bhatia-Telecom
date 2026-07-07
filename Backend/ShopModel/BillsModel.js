@@ -81,6 +81,14 @@ const InvoiceSchema = new mongoose.Schema(
             type: Number,
             default: 0,
         },
+        invoiceFor: {
+            type: String,
+            trim: true,
+        },
+        isGst: {
+            type: String,
+            trim: true,
+        },
 
         // ---------- Meta ----------
         createdBy: {

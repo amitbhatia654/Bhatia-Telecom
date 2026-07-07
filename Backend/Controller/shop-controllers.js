@@ -92,6 +92,8 @@ const createInvoice = async (req, res) => {
             cr_address,
             paymentMode,
             bill_date,
+            invoiceFor,
+            isGst,
             items,
             customerId, // 👈 frontend se aa sakta hai
         } = req.body;
@@ -170,6 +172,8 @@ const createInvoice = async (req, res) => {
             bill_date: bill_date || new Date(),
             invoiceNumber,
             items: updatedItems,
+            invoiceFor: invoiceFor,
+            isGst: isGst,
             totalAmount,
             customerId: finalCustomer._id, // 🔥 main thing
             createdBy: req.user?._id || null,
@@ -199,6 +203,8 @@ const updateInvoice = async (req, res) => {
             cr_address,
             paymentMode,
             bill_date,
+            isGst,
+            invoiceFor,
             items,
         } = req.body;
 
@@ -239,6 +245,10 @@ const updateInvoice = async (req, res) => {
         invoice.bill_date = bill_date || invoice.bill_date;
         invoice.items = updatedItems;
         invoice.totalAmount = totalAmount;
+        invoice.invoiceFor = invoiceFor;
+        invoice.isGst = isGst;
+
+
 
         await invoice.save();
 

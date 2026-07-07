@@ -111,6 +111,11 @@ export default function ViewInvoice() {
                 Shop 62A, Geeta Nagar Crossing ,<br />
                 Infront of Metro pillar 187 , <br />
                 Kanpur U.P. 208002 <br />
+                {invoice.isGst && (
+                  <div className="">
+                    <strong>GST </strong> : 09DQMPB7855K1Z6
+                  </div>
+                )}
                 <strong>Mob:</strong> 8726773631
               </p>
             </div>
@@ -169,11 +174,11 @@ export default function ViewInvoice() {
                   <tr>
                     <th>#</th>
                     <th>Product</th>
-                    <th>Model</th>
+                    <th>{invoice.invoiceFor == "Phone" ? "IMEI" : "Model"}</th>
                     {invoice?.items?.some(
                       (item) => item?.warranty && item?.warranty !== "NA",
                     ) && <th>Warranty</th>}
-                    {/* {console.log(invoice)} */}
+                    {console.log(invoice)}
                     <th>Qty</th>
                     <th>Price</th>
                   </tr>

@@ -85,6 +85,8 @@ export default function Billing() {
       ...values,
     };
 
+    // return console.log(data, "data ");
+
     const res = editMember._id
       ? await axiosInstance.put(`api/update-invoice`, data)
       : await axiosInstance.post(`api/create-invoice`, data);
@@ -101,12 +103,10 @@ export default function Billing() {
       setAllMembers(updatedMember);
     }
 
-    
-
     const itemsText = data?.items
       ?.map(
         (item, index) =>
-          `${index + 1}. ${item.pd_name} (${item.pd_code}) - ₹${item.price}`,
+          `${index + 1}. ${item.pd_name} (${item.pd_code}) - ₹${item.price} ${item.warranty} Warranty`,
       )
       .join("\n");
 
@@ -125,6 +125,8 @@ Hello *${data?.cr_name} Ji* 👋
 ${itemsText}
 
 💰 Total Amount: ₹${res.data.invoiceDetails?.totalAmount}
+
+
 
 💳 Payment Mode: ${data?.paymentMode}
 
@@ -460,7 +462,7 @@ Infront of Metro Pillar No. 187
                     </div>
 
                     {/* 📞 PHONE */}
-                    <div className="col-md-6">
+                    <div className="col-md-3">
                       <label>Phone Number</label>
                       <input
                         type="text"
@@ -477,6 +479,20 @@ Infront of Metro Pillar No. 187
                           }
                         }}
                       />
+                    </div>
+
+                    <div className="col-md-3">
+                      <label>Invoice For</label>
+                      <select
+                        className="form-control"
+                        name={`invoiceFor`}
+                        value={props.values.invoiceFor}
+                        onChange={props.handleChange}
+                      >
+                        {/* <option value="">Select</option> */}
+                        <option value="Accessories"> Accessories</option>
+                        <option value="Phone">Mobile Phone</option>
+                      </select>
                     </div>
 
                     {/* 📍 ADDRESS */}
@@ -513,17 +529,25 @@ Infront of Metro Pillar No. 187
                                 />
                               </div>
 
+                              {console.log(props.values.invoiceFor, "==")}
+
                               <div className="col-md-3">
-                                <label>code</label>
+                                <label>
+                                  {props.values.invoiceFor == "Phone"
+                                    ? "IMEI"
+                                    : "Model "}
+                                </label>
                                 <input
                                   type="text"
                                   className="form-control"
                                   name={`items.${index}.pd_code`}
                                   value={item.pd_code}
                                   onChange={props.handleChange}
-                                  placeholder="Model"
+                                  // placeholder="Model"
                                 />
                               </div>
+
+                              {/* <div className="col-md-1 "></div> */}
 
                               <div className="col-md-3">
                                 <label>Price</label>
@@ -547,9 +571,13 @@ Infront of Metro Pillar No. 187
                                 >
                                   <option value="">Select</option>
                                   <option value="NA">Na</option>
-                                  <option value="1 Month">1 Month</option>
+                                  <option value="1 Month"> 1 Month</option>
+                                  <option value="2 Months">2 Month</option>
                                   <option value="3 Months">3 Months</option>
+                                  <option value="4 Months">4 Months</option>
+                                  <option value="5 Months">5 Months</option>
                                   <option value="6 Months">6 Months</option>
+                                  <option value="9 Months">9 Months</option>
                                   <option value="12 Months">12 Months</option>
                                 </select>
                               </div>
@@ -615,11 +643,13 @@ Infront of Metro Pillar No. 187
                         }
                       >
                         <option value="cash">Cash</option>
-                        <option value="online">Online</option>
+                        <option value="online">UPI </option>
+                        <option value="online">Card</option>
+                        <option value="online">EMI</option>
                       </select>
                     </div>
 
-                    <div className="col-md-6 mt-3">
+                    <div className="col-md-3 mt-3">
                       <label>Gst Bill</label>
                       <input
                         type="checkbox"
