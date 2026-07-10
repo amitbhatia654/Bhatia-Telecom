@@ -106,12 +106,11 @@ export default function ViewInvoice() {
           <div className="row mb-3">
             <div className="col-md-9">
               <h1 className="fw-bold text-primary">Bhatia Telecom Smartzone</h1>
-
               <p className="mb-0">
                 Shop 62A, Geeta Nagar Crossing ,<br />
                 Infront of Metro pillar 187 , <br />
                 Kanpur U.P. 208002 <br />
-                {invoice.isGst && (
+                {invoice.isGst == "true" && (
                   <div className="">
                     <strong>GST </strong> : 09DQMPB7855K1Z6
                   </div>
@@ -178,7 +177,6 @@ export default function ViewInvoice() {
                     {invoice?.items?.some(
                       (item) => item?.warranty && item?.warranty !== "NA",
                     ) && <th>Warranty</th>}
-                    {console.log(invoice)}
                     <th>Qty</th>
                     <th>Price</th>
                   </tr>
@@ -190,7 +188,6 @@ export default function ViewInvoice() {
                       <td>{key + 1}</td>
                       <td>{item?.pd_name}</td>
                       <td>{item?.pd_code}</td>
-                      {/* {console.log(invoice)} */}
                       {invoice?.items?.some(
                         (item) => item?.warranty && item?.warranty !== "NA",
                       ) && <td>{item?.warranty}</td>}

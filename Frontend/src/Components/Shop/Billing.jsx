@@ -529,8 +529,6 @@ Infront of Metro Pillar No. 187
                                 />
                               </div>
 
-                              {console.log(props.values.invoiceFor, "==")}
-
                               <div className="col-md-3">
                                 <label>
                                   {props.values.invoiceFor == "Phone"
@@ -648,6 +646,7 @@ Infront of Metro Pillar No. 187
                         <option value="online">EMI</option>
                       </select>
                     </div>
+                    {console.log(props.values.isGst, "==")}
 
                     <div className="col-md-3 mt-3">
                       <label>Gst Bill</label>
@@ -655,7 +654,10 @@ Infront of Metro Pillar No. 187
                         type="checkbox"
                         className="mx-2"
                         name="isGst"
-                        value={props.values.paymentMode}
+                        checked={
+                          props.values.isGst === true ||
+                          props.values.isGst === "true"
+                        }
                         onChange={(e) => {
                           props.setFieldValue("isGst", e.target.checked);
                         }}
