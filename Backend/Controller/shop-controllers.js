@@ -273,12 +273,19 @@ const updateInvoice = async (req, res) => {
 
 const getInvoices = async (req, res) => {
     try {
-
         const { search } = req.query;
+
+        console.log(req.query, '===')
+
+        // Pagination
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+
+        const skip = (page - 1) * limit;
 
         let filter = {};
 
-        // agar search value hai tab search karo
+        // Search
         if (search) {
             filter = {
                 $or: [
@@ -298,9 +305,29 @@ const getInvoices = async (req, res) => {
             };
         }
 
-        const response = await Invoice.find(filter).sort({ createdAt: -1 });
+        // Total invoices matching search
+        const totalInvoices = await Invoice.countDocuments(filter);
 
-        res.status(200).json({ response });
+        // Paginated invoices
+        const response = await Invoice.find(filter)
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit);
+        console.log(response, '----')
+
+        const totalPages = Math.ceil(totalInvoices / limit);
+
+        res.status(200).json({
+            response,
+            pagination: {
+                currentPage: page,
+                limit,
+                totalInvoices,
+                totalPages,
+                hasNextPage: page < totalPages,
+                hasPreviousPage: page > 1
+            }
+        });
 
     } catch (error) {
         console.error("Error fetching Invoices:", error);

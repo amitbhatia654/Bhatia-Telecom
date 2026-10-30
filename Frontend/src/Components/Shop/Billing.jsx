@@ -25,8 +25,6 @@ import {
 // import ConfirmModal from "/HelperPages/ConfirmModal";
 import ConfirmModal from "../../pages/HelperPages/Modal";
 
-import moment from "moment";
-
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -44,7 +42,7 @@ export default function Billing() {
   const [submitLoading, setSubmitLoading] = useState(false);
   const [editMember, setEditMember] = useState({});
   const [search, setSearch] = useState("");
-  const [rowSize, setRowSize] = useState(8);
+  const [rowSize, setRowSize] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [allMembers, setAllMembers] = useState([]);
@@ -52,7 +50,8 @@ export default function Billing() {
   const [customerQuery, setCustomerQuery] = useState("");
   const [customerList, setCustomerList] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
-  const totalPages = Math.ceil(totalCount / rowSize);
+  const [totalPages, setTotalPages] = useState(1);
+  // const totalPages = Math.ceil(totalCount / rowSize);
 
   const [confirmModalData, setConfirmModalData] = useState({
     open: false,
@@ -106,7 +105,7 @@ export default function Billing() {
     const itemsText = data?.items
       ?.map(
         (item, index) =>
-          `${index + 1}. ${item.pd_name} (${item.pd_code}) - ₹${item.price} ${item.warranty} Warranty`,
+          `${index + 1}. ${item.pd_name} (${item.pd_code}) - ₹${item.price} ${item?.warranty} Warranty`,
       )
       .join("\n");
 
@@ -172,19 +171,40 @@ Infront of Metro Pillar No. 187
   };
 
   const fetchData = async () => {
-    setloading(true);
+    try {
+      setloading(true);
 
-    const res = await axiosInstance.get("/api/get-invoices", {
-      params: { search, rowSize, currentPage },
-    });
-    if (res.status == 200) {
-      setAllMembers(res.data.response);
-      setTotalCount(res.data.totalCount);
-    } else {
+      const res = await axiosInstance.get("/api/get-invoices", {
+        params: {
+          search,
+          page: currentPage,
+          limit: rowSize,
+        },
+      });
+
+      if (res.status === 200) {
+        console.log(res.data, "====");
+        setAllMembers(res.data.response);
+
+        // Total invoices
+        setTotalCount(res.data.pagination.totalInvoices);
+
+        // Agar pagination state chahiye
+        setTotalPages(res.data.pagination.totalPages);
+      } else {
+        setAllMembers([]);
+        setTotalCount(0);
+        setTotalPages(0);
+      }
+    } catch (error) {
+      console.error("Error fetching invoices:", error);
+
       setAllMembers([]);
       setTotalCount(0);
+      setTotalPages(0);
+    } finally {
+      setloading(false);
     }
-    setloading(false);
   };
 
   useEffect(() => {
@@ -353,7 +373,7 @@ Infront of Metro Pillar No. 187
                             }
                             className="btn btn-sm btn-primary"
                           >
-                            <VisibilityIcon></VisibilityIcon> Invoice
+                            <VisibilityIcon></VisibilityIcon>
                           </button>
                         </TableCell>
                       </TableRow>
@@ -646,7 +666,6 @@ Infront of Metro Pillar No. 187
                         <option value="online">EMI</option>
                       </select>
                     </div>
-                    {console.log(props.values.isGst, "==")}
 
                     <div className="col-md-3 mt-3">
                       <label>Gst Bill</label>
